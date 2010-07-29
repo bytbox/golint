@@ -13,6 +13,8 @@ var version = "0.0.2"
 // options
 var showVersion = opts.Longflag("version",
 	"display version information and exit")
+var verbose = opts.Flag("v","verbose",
+	"be verbose")
 
 func main() {
 	// Do the argument parsing
@@ -24,7 +26,9 @@ func main() {
 	for _, filename := range opts.Args {
 		err := DoLint(filename)
 		if err != nil {
-
+			fmt.Fprintf(os.Stderr,
+				"golint: couldn't lint file: %s\n",
+				filename)
 		}
 	}
 }
