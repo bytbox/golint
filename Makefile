@@ -5,8 +5,10 @@ all: golint
 golint: main.6
 	6l -o $@ main.6
 
-main.6: main.go style.go
-	6g -o $@ $?
+MAINFILES = main.go style.go
+
+main.6: ${MAINFILES}
+	6g -o $@ ${MAINFILES}
 
 clean:
-	rm golint *.6
+	rm -f golint *.6

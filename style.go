@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// LineLengthLint is a stateless lint that checks that line lengths are 
+// reasonable.
 type LineLengthLint struct {}
 func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 	if line == "" {
@@ -28,3 +30,5 @@ func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 	}
 	return
 }
+
+type FilesizeLint struct {}
