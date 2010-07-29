@@ -13,7 +13,7 @@ var version = "0.0.2"
 // options
 var showVersion = opts.Longflag("version",
 	"display version information and exit")
-var verbose = opts.Flag("v","verbose",
+var verbose = opts.Flag("v", "verbose",
 	"print verbose output to standard error")
 
 func main() {
@@ -26,8 +26,8 @@ func main() {
 	if *verbose {
 		fmt.Fprintf(os.Stderr,
 			"Beginning lint with %d stateless and "+
-			"%d stateful linters\n",
-			len(statelessLinters),len(statefulLinters))
+				"%d stateful linters\n",
+			len(statelessLinters), len(statefulLinters))
 	}
 	for _, filename := range opts.Args {
 		err := DoLint(filename)
@@ -41,16 +41,16 @@ func main() {
 
 // Show version information
 func ShowVersion() {
-	fmt.Printf("golint v%s\n",version)
+	fmt.Printf("golint v%s\n", version)
 }
 
-var statelessLinters = []StatelessLinter {
+var statelessLinters = []StatelessLinter{
 	&LineLengthLint{},
 	&TabsOnlyLint{},
 	&TrailingWhitespaceLint{},
 }
 
-var statefulLinters = []StatefulLinter {
+var statefulLinters = []StatefulLinter{
 	&FilesizeLint{},
 	&TrailingNewlineLint{},
 }

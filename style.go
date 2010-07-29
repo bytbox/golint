@@ -7,7 +7,8 @@ import (
 
 // LineLengthLint is a stateless lint that checks that line lengths are
 // reasonable.
-type LineLengthLint struct {}
+type LineLengthLint struct{}
+
 func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 	if line == "" {
 		return
@@ -33,7 +34,8 @@ func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 
 // TabsOnlyLint is a stateless lint that checks that only tabs are used to
 // indent lines.
-type TabsOnlyLint struct {}
+type TabsOnlyLint struct{}
+
 func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
 	if line == "" {
 		return
@@ -54,14 +56,15 @@ func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
 
 // TrailingWhitespaceLint is a stateless lint that checks that there is no
 // trailing whitespace.
-type TrailingWhitespaceLint struct {}
+type TrailingWhitespaceLint struct{}
+
 func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
 	if line == "" {
 		return
 	}
 	chars := strings.Split(line, "", -1)
 	c := chars[len(chars)-1]
-	if c == " " || c=="\t" {
+	if c == " " || c == "\t" {
 		msg = "trailing whitespace"
 		err = true
 	}
@@ -73,7 +76,9 @@ func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
 type FilesizeLint struct {
 	linecount int
 }
+
 var lineLimit = 1200
+
 func (l *FilesizeLint) Reset() {
 	l.linecount = 0
 }
@@ -95,11 +100,11 @@ func (l *FilesizeLint) Done() (msg string, err bool) {
 type TrailingNewlineLint struct {
 	blankLineCount int
 }
+
 func (l *TrailingNewlineLint) Reset() {
 	l.blankLineCount = 0
 }
-func (l *TrailingNewlineLint) Lint(line string,
-	lineno int) (msg string, err bool) {
+func (l *TrailingNewlineLint) Lint(line string, lineno int) (msg string, err bool) {
 	if len(line) == 0 {
 		l.blankLineCount++
 	} else {
