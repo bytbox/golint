@@ -35,13 +35,14 @@ func ShowVersion() {
 }
 
 var statelessLinters = []StatelessLinter {
-	LineLengthLint{},
-	TabsOnlyLint{},
-	TrailingWhitespaceLint{},
+	&LineLengthLint{},
+	&TabsOnlyLint{},
+	&TrailingWhitespaceLint{},
 }
 
 var statefulLinters = []StatefulLinter {
-	FilesizeLint{},
+	&FilesizeLint{},
+	&TrailingNewlineLint{},
 }
 
 type StatelessLinter interface {
@@ -75,7 +76,7 @@ func DoLint(filename string) os.Error {
 					filename, lineno+1, msg)
 			}
 		}
-		// run through the statefull linters
+		// run through the stateful linters
 		for _, linter := range statefulLinters {
 			msg, err := linter.Lint(line, lineno)
 			if err {
@@ -93,4 +94,3 @@ func DoLint(filename string) os.Error {
 	}
 	return nil
 }
-

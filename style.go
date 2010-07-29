@@ -74,17 +74,46 @@ type FilesizeLint struct {
 	linecount int
 }
 var lineLimit = 1200
-func (l FilesizeLint) Reset() {
+func (l *FilesizeLint) Reset() {
 	l.linecount = 0
 }
-func (l FilesizeLint) Lint(line string, lineno int) (msg string, err bool) {
+func (l *FilesizeLint) Lint(line string, lineno int) (msg string, err bool) {
 	l.linecount++
 	return
 }
-func (l FilesizeLint) Done() (msg string, err bool) {
+func (l *FilesizeLint) Done() (msg string, err bool) {
 	if l.linecount > lineLimit {
 		msg = fmt.Sprintf("file too long: %d lines (%d max)",
 			l.linecount, lineLimit)
+		err = true
+	}
+	return
+}
+
+// TrailingNewlineLint is a stateful lint that checks that there is only one
+// blank line at the end of the file.
+type TrailingNewlineLint struct {
+	blankLineCount int
+}
+func (l *TrailingNewlineLint) Reset() {
+	l.blankLineCount = 0
+}
+func (l *TrailingNewlineLint) Lint(line string,
+	lineno int) (msg string, err bool) {
+	if len(line) == 0 {
+		l.blankLineCount++
+	} else {
+		l.blankLineCount = 0
+	}
+	return
+}
+func (l *TrailingNewlineLint) Done() (msg string, err bool) {
+	if l.blankLineCount > 1 {
+		msg = "extra trailing blank lines (only one permitted)"
+		err = true
+	}
+	if l.blankLineCount < 1 {
+		msg = "no trailing blank line"
 		err = true
 	}
 	return
