@@ -36,6 +36,8 @@ func ShowVersion() {
 
 var statelessLinters = []StatelessLinter {
 	LineLengthLint{},
+	TabsOnlyLint{},
+	TrailingWhitespaceLint{},
 }
 
 var statefulLinters = []StatefulLinter {
@@ -70,7 +72,7 @@ func DoLint(filename string) os.Error {
 			msg, err := linter.Lint(line)
 			if err {
 				fmt.Printf("%s: L%d: %s\n", 
-					filename, lineno, msg)
+					filename, lineno+1, msg)
 			}
 		}
 		// run through the statefull linters

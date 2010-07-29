@@ -12,7 +12,7 @@ func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 	if line == "" {
 		return
 	}
- 	length := 0
+	length := 0
 	// count characters - a tab is eight characters
 	chars := strings.Split(line, "", -1)
 	for _, c := range chars {
@@ -27,6 +27,37 @@ func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 	if length > limit {
 		msg = fmt.Sprintf("line too long (%d > %d)", length, limit)
 		err = true
+	}
+	return
+}
+
+// TabsOnlyLint is a stateless lint that checks that only tabs are used to
+// indent lines.
+type TabsOnlyLint struct {}
+func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
+	if line == "" {
+		return
+	}
+	chars := strings.Split(line, "", -1)
+	for _, c := range chars {
+		if c == " " {
+			msg = "spaces used for indentation"
+			err = true
+			break
+		}
+		if c != "\t" {
+			break
+		}
+	}
+	return
+}
+
+// TrailingWhitespaceLint is a stateless lint that checks that there is no
+// trailing whitespace.
+type TrailingWhitespaceLint struct {}
+func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
+	if line == "" {
+		return
 	}
 	return
 }
