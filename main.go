@@ -28,9 +28,11 @@ func main() {
 	}
 	if *verbose {
 		fmt.Fprintf(os.Stderr,
-			"Beginning lint with %d stateless and "+
-				"%d stateful linters\n",
-			len(statelessLinters), len(statefulLinters))
+			"Beginning lint with %d stateless, "+
+				"%d stateful, and %d parsing linters\n",
+			len(statelessLinters), 
+			len(statefulLinters),
+			len(parsingLinters))
 	}
 	for _, filename := range opts.Args {
 		err := DoLintFrom(filename)
