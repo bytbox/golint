@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"go/ast"
+	"go/parser"
 	"io"
 	"io/ioutil"
 	"opts"
@@ -75,7 +77,8 @@ type StatefulLinter interface {
 }
 
 type ParsingLinter interface {
-
+	Init(*ast.File)
+	Next() (string, bool)
 }
 
 func DoLintFrom(filename string) os.Error {
@@ -127,5 +130,19 @@ func DoLint(reader io.Reader,filename string) os.Error {
 		}
 	}
 	// run the parsing linters
+	// First, attempt to parse.
+	astFile, err := parser.ParseFile(filename,content,nil,0)
+	if err != nil {
+		return err
+	}
+	// for each parsingLinter
+	for _, linter := range parsingLinters {
+		linter.Init(astFile)
+		msg, cont := linter.Next()
+		for cont {
+			fmt.Printf("%s: %s\n", filename, msg)
+			msg, cont = linter.Next()
+		}
+	}
 	return nil
 }
