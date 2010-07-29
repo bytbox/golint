@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"opts"
 	"os"
@@ -30,12 +31,16 @@ func main() {
 			len(statelessLinters), len(statefulLinters))
 	}
 	for _, filename := range opts.Args {
-		err := DoLint(filename)
+		err := DoLintFrom(filename)
 		if err != nil {
 			fmt.Fprintf(os.Stderr,
 				"golint: couldn't lint file: %s\n",
 				filename)
 		}
+	}
+	if len(opts.Args) == 0 {
+		// read from standard input
+		DoLint(os.Stdin,"stdin")
 	}
 }
 
@@ -55,6 +60,10 @@ var statefulLinters = []StatefulLinter{
 	&TrailingNewlineLint{},
 }
 
+var parsingLinters = []ParsingLinter{
+	
+}
+
 type StatelessLinter interface {
 	Lint(string) (string, bool)
 }
@@ -65,9 +74,24 @@ type StatefulLinter interface {
 	Done() (string, bool)
 }
 
-func DoLint(filename string) os.Error {
+type ParsingLinter interface {
+
+}
+
+func DoLintFrom(filename string) os.Error {
 	// read in the file
 	content, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	// create a reader on the content, and call DoLint
+	DoLint(strings.NewReader(string(content)),filename)
+	return nil
+}
+
+func DoLint(reader io.Reader,filename string) os.Error {
+	// read in the file
+	content, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return err
 	}
@@ -102,5 +126,6 @@ func DoLint(filename string) os.Error {
 			fmt.Printf("%s: %s\n", filename, msg)
 		}
 	}
+	// run the parsing linters
 	return nil
 }
