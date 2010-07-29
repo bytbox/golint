@@ -38,16 +38,18 @@ var statelessLinters = []StatelessLinter {
 	LineLengthLint{},
 }
 
-var statefullLinters = []StatefullLinter {
-
+var statefulLinters = []StatefulLinter {
+	FilesizeLint{},
 }
 
 type StatelessLinter interface {
 	Lint(string) (string, bool)
 }
 
-type StatefullLinter interface {
+type StatefulLinter interface {
 	Lint(string, int) (string, bool)
+	Reset()
+	Done() (string, bool)
 }
 
 func DoLint(filename string) os.Error {
@@ -56,6 +58,10 @@ func DoLint(filename string) os.Error {
 	if err != nil {
 		return err
 	}
+	// prepare all the stateful linters
+	for _, linter := range statefulLinters {
+		linter.Reset()
+	}
 	// for each line
 	lines := strings.Split(string(content), "\n", -1)
 	for lineno, line := range lines {
@@ -63,15 +69,24 @@ func DoLint(filename string) os.Error {
 		for _, linter := range statelessLinters {
 			msg, err := linter.Lint(line)
 			if err {
-				fmt.Printf("L%d: %s\n", lineno, msg)
+				fmt.Printf("%s: L%d: %s\n", 
+					filename, lineno, msg)
 			}
 		}
 		// run through the statefull linters
-		for _, linter := range statefullLinters {
+		for _, linter := range statefulLinters {
 			msg, err := linter.Lint(line, lineno)
 			if err {
-				fmt.Printf("L%d: %s\n", lineno, msg)
+				fmt.Printf("%s: %s\n", 
+					filename, msg)
 			}
+		}
+	}
+	// tell all the stateful linters we're done
+	for _, linter := range statefulLinters {
+		msg, err := linter.Done()
+		if err {
+			fmt.Printf("%s: %s\n", filename, msg)
 		}
 	}
 	return nil
