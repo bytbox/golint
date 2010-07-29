@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// LineLengthLint is a stateless lint that checks that line lengths are 
+// LineLengthLint is a stateless lint that checks that line lengths are
 // reasonable.
 type LineLengthLint struct {}
 func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
@@ -59,6 +59,12 @@ func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
 	if line == "" {
 		return
 	}
+	chars := strings.Split(line, "", -1)
+	c := chars[len(chars)-1]
+	if c == " " || c=="\t" {
+		msg = "trailing whitespace"
+		err = true
+	}
 	return
 }
 
@@ -77,7 +83,7 @@ func (l FilesizeLint) Lint(line string, lineno int) (msg string, err bool) {
 }
 func (l FilesizeLint) Done() (msg string, err bool) {
 	if l.linecount > lineLimit {
-		msg = fmt.Sprintf("file too long: %d lines (%d max)", 
+		msg = fmt.Sprintf("file too long: %d lines (%d max)",
 			l.linecount, lineLimit)
 		err = true
 	}

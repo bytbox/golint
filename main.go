@@ -12,7 +12,7 @@ var version = "0.0.1"
 
 // options
 var showVersion = opts.Longflag("version",
-	"display version information and exit") 
+	"display version information and exit")
 
 func main() {
 	// Do the argument parsing
@@ -71,7 +71,7 @@ func DoLint(filename string) os.Error {
 		for _, linter := range statelessLinters {
 			msg, err := linter.Lint(line)
 			if err {
-				fmt.Printf("%s: L%d: %s\n", 
+				fmt.Printf("%s: L%d: %s\n",
 					filename, lineno+1, msg)
 			}
 		}
@@ -79,7 +79,7 @@ func DoLint(filename string) os.Error {
 		for _, linter := range statefulLinters {
 			msg, err := linter.Lint(line, lineno)
 			if err {
-				fmt.Printf("%s: %s\n", 
+				fmt.Printf("%s: %s\n",
 					filename, msg)
 			}
 		}
