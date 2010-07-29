@@ -14,7 +14,7 @@ var version = "0.0.2"
 var showVersion = opts.Longflag("version",
 	"display version information and exit")
 var verbose = opts.Flag("v","verbose",
-	"be verbose")
+	"print verbose output to standard error")
 
 func main() {
 	// Do the argument parsing
@@ -22,6 +22,12 @@ func main() {
 	if *showVersion {
 		ShowVersion()
 		os.Exit(0)
+	}
+	if *verbose {
+		fmt.Fprintf(os.Stderr,
+			"Beginning lint with %d stateless and "+
+			"%d stateful linters\n",
+			len(statelessLinters),len(statefulLinters))
 	}
 	for _, filename := range opts.Args {
 		err := DoLint(filename)
