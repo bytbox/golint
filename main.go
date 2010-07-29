@@ -34,6 +34,22 @@ func ShowVersion() {
 	fmt.Printf("golint v%s\n",version)
 }
 
+var statelessLinters = []StatelessLinter {
+	LineLengthLint{},
+}
+
+var statefullLinters = []StatefullLinter {
+
+}
+
+type StatelessLinter interface {
+	Lint(string) (string, bool)
+}
+
+type StatefullLinter interface {
+	Lint(string, int) (string, bool)
+}
+
 func DoLint(filename string) os.Error {
 	// read in the file
 	content, err := ioutil.ReadFile(filename)
@@ -61,42 +77,3 @@ func DoLint(filename string) os.Error {
 	return nil
 }
 
-var statelessLinters = []StatelessLinter {
-	LineLengthLint{},
-}
-
-var statefullLinters = []StatefullLinter {
-
-}
-
-type StatelessLinter interface {
-	Lint(string) (string, bool)
-}
-
-type StatefullLinter interface {
-	Lint(string, int) (string, bool)
-}
-
-type LineLengthLint struct {}
-func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
-	if line == "" {
-		return
-	}
- 	length := 0
-	// count characters - a tab is eight characters
-	chars := strings.Split(line, "", -1)
-	for _, c := range chars {
-		if c == "\t" {
-			length += 8
-		} else {
-			length++
-		}
-	}
-	// limit is 78
-	limit := 78
-	if length > limit {
-		msg = fmt.Sprintf("line too long (%d > %d)", length, limit)
-		err = true
-	}
-	return
-}
