@@ -30,7 +30,7 @@ func main() {
 		fmt.Fprintf(os.Stderr,
 			"Beginning lint with %d stateless, "+
 				"%d stateful, and %d parsing linters\n",
-			len(statelessLinters), 
+			len(statelessLinters),
 			len(statefulLinters),
 			len(parsingLinters))
 	}

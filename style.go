@@ -10,9 +10,6 @@ import (
 type LineLengthLint struct{}
 
 func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
-	if line == "" {
-		return
-	}
 	length := 0
 	// count characters - a tab is eight characters
 	chars := strings.Split(line, "", -1)
@@ -37,9 +34,6 @@ func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 type TabsOnlyLint struct{}
 
 func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
-	if line == "" {
-		return
-	}
 	chars := strings.Split(line, "", -1)
 	for _, c := range chars {
 		if c == " " {
@@ -59,7 +53,8 @@ func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
 type TrailingWhitespaceLint struct{}
 
 func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
-	if line == "" {
+	if len(line) == 0 {
+		// it's a blank line, just return no error
 		return
 	}
 	chars := strings.Split(line, "", -1)
