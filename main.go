@@ -65,7 +65,7 @@ var statefulLinters = []StatefulLinter{
 }
 
 var parsingLinters = []ParsingLinter{
-	
+	&ValidParseLint{},
 }
 
 type StatelessLinter interface {

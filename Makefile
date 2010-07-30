@@ -1,14 +1,16 @@
 .PHONY: all clean
 
+include ${GOROOT}/src/Make.${GOARCH}
+
 all: golint
 
-golint: main.6
-	6l -o $@ main.6
+golint: main.${O}
+	${LD} -o $@ main.${O}
 
-MAINFILES = main.go style.go
+MAINFILES = main.go style.go valid.go
 
 main.6: ${MAINFILES}
-	6g -o $@ ${MAINFILES}
+	${GC} -o $@ ${MAINFILES}
 
 clean:
-	rm -f golint *.6
+	rm -f golint *.${O}
