@@ -57,6 +57,7 @@ var statelessLinters = []StatelessLinter{
 	&LineLengthLint{},
 	&TabsOnlyLint{},
 	&TrailingWhitespaceLint{},
+	&TrailingSemicolonLint{},
 }
 
 var statefulLinters = []StatefulLinter{
@@ -94,6 +95,16 @@ func DoLintFrom(filename string) os.Error {
 	return nil
 }
 
+func parse(filename string, content string, c chan *ast.File) {
+	file, err := parser.ParseFile(filename, content, nil, 0)
+	if err != nil {
+		// woah! No good way to handle this!
+		c <- nil
+		return
+	}
+	c <- file
+}
+
 func DoLint(reader io.Reader,filename string) os.Error {
 	// read in the file
 	content, err := ioutil.ReadAll(reader)
@@ -104,6 +115,9 @@ func DoLint(reader io.Reader,filename string) os.Error {
 	for _, linter := range statefulLinters {
 		linter.Reset()
 	}
+	// start parsing in parallel
+	c := make(chan *ast.File)
+	go parse(filename, string(content), c)
 	// for each line
 	lines := strings.Split(string(content), "\n", -1)
 	for lineno, line := range lines {
@@ -132,11 +146,8 @@ func DoLint(reader io.Reader,filename string) os.Error {
 		}
 	}
 	// run the parsing linters
-	// First, attempt to parse.
-	astFile, err := parser.ParseFile(filename,content,nil,0)
-	if err != nil {
-		return err
-	}
+	// First, get the result of the parsing
+	astFile := <- c
 	// for each parsingLinter
 	for _, linter := range parsingLinters {
 		linter.Init(astFile)

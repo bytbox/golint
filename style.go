@@ -118,3 +118,8 @@ func (l *TrailingNewlineLint) Done() (msg string, err bool) {
 	}
 	return
 }
+
+type TrailingSemicolonLint struct {}
+func (l *TrailingSemicolonLint) Lint(line string) (msg string, err bool) {
+	return
+}
