@@ -125,7 +125,7 @@ func DoLint(reader io.Reader,filename string) os.Error {
 		for _, linter := range statelessLinters {
 			msg, err := linter.Lint(line)
 			if err {
-				fmt.Printf("%s: L%d: %s\n",
+				fmt.Printf("%s:%d: %s\n",
 					filename, lineno+1, msg)
 			}
 		}

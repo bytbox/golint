@@ -95,7 +95,6 @@ func (l *FilesizeLint) Done() (msg string, err bool) {
 type TrailingNewlineLint struct {
 	blankLineCount int
 }
-
 func (l *TrailingNewlineLint) Reset() {
 	l.blankLineCount = 0
 }

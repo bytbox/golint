@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go/ast"
 )
 
@@ -15,9 +16,22 @@ type validationVisitor struct {
 }
 
 func (v validationVisitor) Visit(node interface{}) ast.Visitor {
-	err := Error{}
-	// send whatever error along
-	v.sync <- err
+	// check the type
+	if decl, ok := node.(ast.BadDecl); ok {
+		msg := fmt.Sprintf("bad declaration at %d",
+			decl.Position)
+		v.sync <- Error{msg:msg}
+	}
+	if stmt, ok := node.(ast.BadStmt); ok {
+		msg := fmt.Sprintf("bad statement at %d",
+			stmt.Position)
+		v.sync <- Error{msg:msg}
+	}
+	if expr, ok := node.(ast.BadExpr); ok {
+		msg := fmt.Sprintf("bad expression at %d",
+			expr.Position)
+		v.sync <- Error{msg:msg}
+	}
 	return v
 }
 
