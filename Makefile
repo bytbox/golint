@@ -9,7 +9,7 @@ golint: main.${O}
 
 MAINFILES = main.go style.go valid.go
 
-main.6: ${MAINFILES}
+main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
 
 clean:
