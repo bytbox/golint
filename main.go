@@ -95,14 +95,16 @@ func DoLintFrom(filename string) os.Error {
 	return nil
 }
 
-func parse(filename string, content string, c chan *ast.File) {
+// a parseResult represents the result of a call to ParseFile
+type parseResult struct {
+	file *ast.File
+	err os.Error
+}
+
+func parse(filename string, content string, c chan parseResult) {
 	file, err := parser.ParseFile(filename, content, nil, 0)
-	if err != nil {
-		// woah! No good way to handle this!
-		c <- nil
-		return
-	}
-	c <- file
+	res := parseResult{file, err}
+	c <- res
 }
 
 func DoLint(reader io.Reader,filename string) os.Error {
@@ -116,7 +118,7 @@ func DoLint(reader io.Reader,filename string) os.Error {
 		linter.Reset()
 	}
 	// start parsing in parallel
-	c := make(chan *ast.File)
+	c := make(chan parseResult)
 	go parse(filename, string(content), c)
 	// for each line
 	lines := strings.Split(string(content), "\n", -1)
@@ -147,7 +149,11 @@ func DoLint(reader io.Reader,filename string) os.Error {
 	}
 	// run the parsing linters
 	// First, get the result of the parsing
-	astFile := <- c
+	result := <- c
+	if result.err != nil {
+		fmt.Printf("%s\n",result.err)
+	}
+	astFile := result.file
 	// for each parsingLinter
 	for _, linter := range parsingLinters {
 		linter.Init(astFile)
