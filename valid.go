@@ -11,11 +11,11 @@ type Error struct {
 	done bool
 }
 
-type validationVisitor struct {
+type parseValidationVisitor struct {
 	sync chan Error
 }
 
-func (v validationVisitor) Visit(node interface{}) ast.Visitor {
+func (v parseValidationVisitor) Visit(node interface{}) ast.Visitor {
 	// check the type
 	if decl, ok := node.(ast.BadDecl); ok {
 		msg := fmt.Sprintf("bad declaration at %d",
@@ -35,21 +35,21 @@ func (v validationVisitor) Visit(node interface{}) ast.Visitor {
 	return v
 }
 
-func (v validationVisitor) WalkOn(file *ast.File) {
+func (v parseValidationVisitor) WalkOn(file *ast.File) {
 	ast.Walk(v, file)
 	v.sync <- Error{done: true}
 }
 
 // ValidParseLint is a parsing linter that checks to make sure the code
-// parses properly, and emits more helpful messages than the compiler when
-// it does not.
+// parses properly, and tries to emit more helpful messages than the
+// compiler when it does not.
 type ValidParseLint struct {
 	sync chan Error
 }
 func (l *ValidParseLint) Init(file *ast.File) {
 	// don't buffer, to force a rate limit
 	l.sync = make(chan Error)
-	visitor := &validationVisitor{l.sync}
+	visitor := &parseValidationVisitor{l.sync}
 	go visitor.WalkOn(file)
 }
 func (l *ValidParseLint) Next() (msg string, err bool) {
