@@ -66,6 +66,23 @@ func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
 	return
 }
 
+// SemicolonLint is a stateless lint that checks that there are no unneeded
+// semicolons.
+type SemicolonLint struct{}
+func (lint SemicolonLint) Lint(line string) (msg string, err bool) {
+	if len(line) == 0 {
+		// it's a blank line, just return no error
+		return
+	}
+	chars := strings.Split(line, "", -1)
+	c := chars[len(chars)-1]
+	if c == ";" {
+		msg = "unnecesary semicolon"
+		err = true
+	}
+	return
+}
+
 // FilesizeLint is a stateful lint that checks that the number of lines in
 // a file is reasonable.
 type FilesizeLint struct {
@@ -115,10 +132,5 @@ func (l *TrailingNewlineLint) Done() (msg string, err bool) {
 		msg = "no trailing blank line"
 		err = true
 	}
-	return
-}
-
-type TrailingSemicolonLint struct {}
-func (l *TrailingSemicolonLint) Lint(line string) (msg string, err bool) {
 	return
 }

@@ -57,7 +57,7 @@ var statelessLinters = []StatelessLinter{
 	&LineLengthLint{},
 	&TabsOnlyLint{},
 	&TrailingWhitespaceLint{},
-	&TrailingSemicolonLint{},
+	&SemicolonLint{},
 }
 
 var statefulLinters = []StatefulLinter{
