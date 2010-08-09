@@ -7,7 +7,7 @@ all: golint
 golint: main.${O}
 	${LD} -o $@ main.${O}
 
-MAINFILES = main.go style.go valid.go
+MAINFILES = main.go style.go valid.go comments.go
 
 main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
