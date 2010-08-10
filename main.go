@@ -53,23 +53,23 @@ func ShowVersion() {
 	fmt.Printf("golint v%s\n", version)
 }
 
-var statelessLinters = []StatelessLinter{
-	&LineLengthLint{},
-	&TabsOnlyLint{},
-	&TrailingWhitespaceLint{},
-	&SemicolonLint{},
-	&TodoLint{},
-	&FixmeLint{},
-	&XXXLint{},
+var statelessLinters = map[string]StatelessLinter{
+	"linelen": &LineLengthLint{},
+	"tabsonly": &TabsOnlyLint{},
+	"trailingwhitespace": &TrailingWhitespaceLint{},
+	"semicolon": &SemicolonLint{},
+	"todo": &TodoLint{},
+	"fixme": &FixmeLint{},
+	"xxx": &XXXLint{},
 }
 
-var statefulLinters = []StatefulLinter{
-	&FilesizeLint{},
-	&TrailingNewlineLint{},
+var statefulLinters = map[string]StatefulLinter{
+	"filesize": &FilesizeLint{},
+	"trailingnewline": &TrailingNewlineLint{},
 }
 
-var parsingLinters = []ParsingLinter{
-	&ValidParseLint{},
+var parsingLinters = map[string]ParsingLinter{
+	"validparse": &ValidParseLint{},
 }
 
 type StatelessLinter interface {
