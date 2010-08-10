@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-var version = "0.0.2"
+var version = "0.0.3"
 
 // options
 var showVersion = opts.Longflag("version",
