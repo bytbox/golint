@@ -21,6 +21,7 @@ var verbose = opts.Flag("v", "verbose",
 
 func main() {
 	// Do the argument parsing
+	opts.Usage("[sourcefile...]")
 	opts.Parse()
 	if *showVersion {
 		ShowVersion()
