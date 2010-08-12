@@ -33,6 +33,14 @@ func (l DeprecationLint) Lint(line string) (msg string, err bool) {
 	return
 }
 
+// MethodDeprecationLint is a parsing linter that looks for and reports usage
+// of deprecated methods.
+type MethodDeprecationLint struct {
+	Type string // the name of the type on which the method is called
+	Method string // the name of the method
+	Reason string // the reason for deprecation, or an alternative form
+}
+
 // PackageDeprecationLint is a parsing linter that looks for and reports usage
 // of deprecated packages.
 type PackageDeprecationLint struct {

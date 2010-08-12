@@ -34,18 +34,6 @@ func main() {
 		os.Exit(0)
 	}
 	initLints()
-	if *list {
-		for lname := range statelessLinters {
-			fmt.Printf("%s\n",lname)
-		}
-		for lname := range statefulLinters {
-			fmt.Printf("%s\n",lname)
-		}
-		for lname := range parsingLinters {
-			fmt.Printf("%s\n",lname)
-		}
-		os.Exit(0)
-	}
 	// disable, via deletion, the disabled lints
 	for _, dcat := range *disabledCatList {
 		for lname := range statelessLinters {
@@ -68,6 +56,18 @@ func main() {
 		statelessLinters[dlint] = nil, false
 		statefulLinters[dlint] = nil, false
 		parsingLinters[dlint] = nil, false
+	}
+	if *list {
+		for lname := range statelessLinters {
+			fmt.Printf("%s\n",lname)
+		}
+		for lname := range statefulLinters {
+			fmt.Printf("%s\n",lname)
+		}
+		for lname := range parsingLinters {
+			fmt.Printf("%s\n",lname)
+		}
+		os.Exit(0)
 	}
 	if *verbose {
 		fmt.Fprintf(os.Stderr,
@@ -161,6 +161,12 @@ func parse(filename string, content string, c chan parseResult) {
 	c <- res
 }
 
+func doParse(filename string, content string) parseResult {
+	file, err := parser.ParseFile(filename, content, nil, 0)
+	res := parseResult{file, err}
+	return res
+}
+
 func DoLint(reader io.Reader, filename string) os.Error {
 	// read in the file
 	content, err := ioutil.ReadAll(reader)
@@ -172,8 +178,8 @@ func DoLint(reader io.Reader, filename string) os.Error {
 		linter.Reset()
 	}
 	// start parsing in parallel
-	c := make(chan parseResult)
-	go parse(filename, string(content), c)
+	//c := make(chan parseResult)
+	//go parse(filename, string(content), c)
 	// for each line
 	lines := strings.Split(string(content), "\n", -1)
 	for lineno, line := range lines {
@@ -203,7 +209,8 @@ func DoLint(reader io.Reader, filename string) os.Error {
 	}
 	// run the parsing linters
 	// First, get the result of the parsing
-	result := <-c
+	//result := <-c
+	result := doParse(filename, string(content))
 	if result.err != nil {
 		fmt.Printf("%s (in parser)\n", result.err)
 	}
