@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go/ast"
 	"strings"
 )
 
@@ -134,5 +135,29 @@ func (l *TrailingNewlineLint) Done() (msg string, err bool) {
 		msg = "no trailing blank line"
 		err = true
 	}
+	return
+}
+
+// UncleanImportLint is a parsing linter that looks for and reports ugly 
+// package imports.
+type UncleanImportLint struct {
+	file *ast.File
+}
+
+func (l *UncleanImportLint) Init(file *ast.File) {
+	l.file = file
+}
+
+type uncleanImportVisitor struct {}
+
+func (v *uncleanImportVisitor) Visit(node interface{}) ast.Visitor {
+	if is, ok := node.(*ast.ImportSpec); ok {
+		path := strings.Trim(string(is.Path.Value),"\"")
+		path = path
+	}
+	return v
+}
+
+func (l *UncleanImportLint) Next() (msg string, err bool) {
 	return
 }
