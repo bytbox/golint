@@ -1,35 +1,37 @@
 package main
 
-import "strings"
+import (
+	"regexp"
+)
 
 // TodoLint is a stateless linter that checks for and prints out lines that
-// have TODO notices.
+// have "TODO" notices.
 type TodoLint struct{}
 
 func (TodoLint) Lint(line string) (msg string, err bool) {
-	if strings.Index(line, "TODO") != -1 {
+	if m, _ := regexp.MatchString("TODO[ !:]", line); m {
 		msg, err = line, true
 	}
 	return
 }
 
 // FixmeLint is a stateless linter that checks for and prints out lines that
-// have FIXME notices.
+// have "FIXM"E notices.
 type FixmeLint struct{}
 
 func (FixmeLint) Lint(line string) (msg string, err bool) {
-	if strings.Index(line, "FIXME") != -1 {
+	if m, _ := regexp.MatchString("FIXME[ !:]", line); m {
 		msg, err = line, true
 	}
 	return
 }
 
 // XXXLint is a stateless linter that checks for and prints out lines that
-// have XXX-style TODO notices (a convention in Java, at least).
+// have XXX-style "TODO" notices (a convention in Java, at least).
 type XXXLint struct{}
 
 func (XXXLint) Lint(line string) (msg string, err bool) {
-	if strings.Index(line, "XXX") != -1 {
+	if m, _ := regexp.MatchString("XXX[ !:]", line); m {
 		msg, err = line, true
 	}
 	return
