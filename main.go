@@ -1,5 +1,8 @@
 package main
 
+// TODO catch places a semicolon would be inserted to cause a syntax error
+// TODO unused warnings
+
 import (
 	"fmt"
 	"go/ast"
@@ -14,10 +17,12 @@ import (
 var version = "0.0.4"
 
 // options
-var showVersion = opts.Longflag("version",
-	"display version information and exit")
-var verbose = opts.Flag("v", "verbose",
-	"print verbose output to standard error")
+var (
+	showVersion = opts.Longflag("version",
+		"display version information and exit")
+	verbose = opts.Flag("v", "verbose",
+		"print verbose output to standard error")
+)
 
 func main() {
 	// Do the argument parsing
@@ -59,6 +64,7 @@ var statelessLinters = map[string]StatelessLinter{
 	"tabsonly":           &TabsOnlyLint{},
 	"trailingwhitespace": &TrailingWhitespaceLint{},
 	"semicolon":          &SemicolonLint{},
+	"deprecated:new":     FuncDeprecationLint("new","use &T{}"),
 	"todo":               &TodoLint{},
 	"fixme":              &FixmeLint{},
 	"xxx":                &XXXLint{},
