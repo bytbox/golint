@@ -21,6 +21,7 @@ var (
 	disabledLintList = opts.Shortmulti("d", "disabled lints", "lint")
 	disabledCatList  = opts.Shortmulti("D", "disabled lint categories", "category")
 	showVersion      = opts.Longflag("version", "display version information and exit")
+	list             = opts.Flag("l", "list", "list linters and exit")
 	verbose          = opts.Flag("v", "verbose", "print verbose output to standard error")
 )
 
@@ -30,6 +31,18 @@ func main() {
 	opts.Parse()
 	if *showVersion {
 		ShowVersion()
+		os.Exit(0)
+	}
+	if *list {
+		for lname := range statelessLinters {
+			fmt.Printf("%s\n",lname)
+		}
+		for lname := range statefulLinters {
+			fmt.Printf("%s\n",lname)
+		}
+		for lname := range parsingLinters {
+			fmt.Printf("%s\n",lname)
+		}
 		os.Exit(0)
 	}
 	// disable, via deletion, the disabled lints
