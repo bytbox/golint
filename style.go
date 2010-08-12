@@ -90,7 +90,7 @@ type FilesizeLint struct {
 	linecount int
 }
 
-var lineLimit = 1200
+const lineLimit = 1200
 
 func (l *FilesizeLint) Reset() {
 	l.linecount = 0
