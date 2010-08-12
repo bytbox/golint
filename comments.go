@@ -2,6 +2,7 @@ package main
 
 import (
 	"regexp"
+	"strings"
 )
 
 // TodoLint is a stateless linter that checks for and prints out lines that
@@ -10,7 +11,7 @@ type TodoLint struct{}
 
 func (TodoLint) Lint(line string) (msg string, err bool) {
 	if m, _ := regexp.MatchString("TODO[ !:]", line); m {
-		msg, err = line, true
+		msg, err = strings.Trim(line, "\t"), true
 	}
 	return
 }
@@ -21,7 +22,7 @@ type FixmeLint struct{}
 
 func (FixmeLint) Lint(line string) (msg string, err bool) {
 	if m, _ := regexp.MatchString("FIXME[ !:]", line); m {
-		msg, err = line, true
+		msg, err = strings.Trim(line, "\t"), true
 	}
 	return
 }
@@ -32,7 +33,7 @@ type XXXLint struct{}
 
 func (XXXLint) Lint(line string) (msg string, err bool) {
 	if m, _ := regexp.MatchString("XXX[ !:]", line); m {
-		msg, err = line, true
+		msg, err = strings.Trim(line, "\t"), true
 	}
 	return
 }
