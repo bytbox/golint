@@ -227,7 +227,7 @@ func DoLint(reader io.Reader, filename string) os.Error {
 		linter.Init(astFile)
 		msg, cont := linter.Next()
 		for cont {
-			if msg[0] == ':' {
+			if len(msg)>0 && msg[0] == ':' {
 				fmt.Printf("%s:%s%s\n", filename, lname, msg)
 			} else {
 				fmt.Printf("%s|%s: %s\n", filename, lname, msg)
