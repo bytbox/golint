@@ -4,33 +4,30 @@ import (
 	"fmt"
 	"go/ast"
 	"regexp"
+	"strings"
 )
 
 // DeprecationLint is a stateless linter that looks for and reports deprecated
-// constructs. New DebrecationLints should be created with NewDeprecationLint
-// or a related method.
+// constructs.
 //
 // Not all deprecated forms may be expressable with a DeprecationLint.
 type DeprecationLint struct {
-	Form   string // a regular expression representing the form
+	Form   string // a human-readable string representing the form
+	Regexp string // a regular expression representing the form
 	Reason string // the reason for deprecation, or an alternative form
 }
 
-func NewDeprecationLint(re string, reason string) (lint DeprecationLint) {
-	lint.Form, lint.Reason = re, reason
-	return
-}
-
 func FuncDeprecationLint(fn string, reason string) (lint DeprecationLint) {
-	return NewDeprecationLint("[^a-zA-Z0-9_]"+fn+" *\\(", reason)
+	return DeprecationLint{fn+"()","[^a-zA-Z0-9_]"+fn+" *\\(", reason}
 }
 
 
 func (l DeprecationLint) Lint(line string) (msg string, err bool) {
-	if m, _ := regexp.MatchString(l.Form, line); m {
+	if m, _ := regexp.MatchString(l.Regexp, line); m {
 		err = true
 		// XXX once the regexp patch is out, we can give more info
-		msg = fmt.Sprintf("deprecated: %s", l.Reason)
+		msg = fmt.Sprintf("deprecated use of %s: %s",
+			l.Form, l.Reason)
 	}
 	return
 }
@@ -40,13 +37,39 @@ func (l DeprecationLint) Lint(line string) (msg string, err bool) {
 type PackageDeprecationLint struct {
 	Package string // the name of the deprecated package
 	Reason  string // the reason for deprecation, or an alternative form
-	file    *ast.File
+	err     bool
 }
 
-func (l PackageDeprecationLint) Init(file *ast.File) {
-	l.file = file
+func (l *PackageDeprecationLint) Init(file *ast.File) {
+	visitor := &packageDeprecationVisitor{l.Package, false}
+	ast.Walk(visitor, file)
+	if visitor.err {
+		l.err = true
+	}
 }
 
-func (l PackageDeprecationLint) Next() (msg string, err bool) {
+type packageDeprecationVisitor struct {
+	pname string
+	err bool
+}
+
+func (v *packageDeprecationVisitor) Visit(node interface{}) ast.Visitor {
+	if is, ok := node.(*ast.ImportSpec); ok {
+		path := strings.Trim(string(is.Path.Value),"\"")
+		if path == v.pname {
+			v.err = true
+			return nil
+		}
+	}
+	return v
+}
+
+func (l *PackageDeprecationLint) Next() (msg string, err bool) {
+	if l.err {
+		msg, err = fmt.Sprintf(
+			"use of deprecated package %s (%s)",
+			l.Package, l.Reason), true
+		l.err = false
+	}
 	return
 }

@@ -105,7 +105,7 @@ var statefulLinters = map[string]StatefulLinter{
 }
 
 var parsingLinters = map[string]ParsingLinter{
-	"syntaxvalidparse": &ValidParseLint{},
+	"syntax:validparse": &ValidParseLint{},
 	"deprecated:once": &PackageDeprecationLint{Package: "once",
 		Reason: "use sync.Once"},
 }
@@ -168,16 +168,16 @@ func DoLint(reader io.Reader, filename string) os.Error {
 		for lname, linter := range statelessLinters {
 			msg, err := linter.Lint(line)
 			if err {
-				fmt.Printf("%s:%d: %s (%s)\n",
-					filename, lineno+1, msg, lname)
+				fmt.Printf("%s:%d|%s: %s\n",
+					filename, lineno+1, lname, msg)
 			}
 		}
 		// run through the stateful linters
 		for lname, linter := range statefulLinters {
 			msg, err := linter.Lint(line, lineno)
 			if err {
-				fmt.Printf("%s: %s (%s)\n",
-					filename, msg, lname)
+				fmt.Printf("%s|%s: %s\n",
+					filename, lname, msg)
 			}
 		}
 	}
@@ -185,7 +185,7 @@ func DoLint(reader io.Reader, filename string) os.Error {
 	for lname, linter := range statefulLinters {
 		msg, err := linter.Done()
 		if err {
-			fmt.Printf("%s: %s (%s)\n", filename, msg, lname)
+			fmt.Printf("%s|%s: %s\n", filename, lname, msg)
 		}
 	}
 	// run the parsing linters
@@ -200,7 +200,11 @@ func DoLint(reader io.Reader, filename string) os.Error {
 		linter.Init(astFile)
 		msg, cont := linter.Next()
 		for cont {
-			fmt.Printf("%s: %s (%s)\n", filename, msg, lname)
+			if msg[0]==':' {
+				fmt.Printf("%s:%s%s\n", filename, lname, msg)
+			} else {
+				fmt.Printf("%s|%s: %s\n", filename, lname, msg)
+			}
 			msg, cont = linter.Next()
 		}
 	}
