@@ -14,13 +14,15 @@ import (
 // DeprecationLint is a stateless linter that looks for and reports deprecated
 // constructs.
 //
-// Not all deprecated forms may be expressable with a DeprecationLint.
+// Only deprecated forms describable by a regular expression matching a single
+// line may be used with DeprecationLint.
 type DeprecationLint struct {
 	Form   string // a human-readable string representing the form
 	Regexp string // a regular expression representing the form
 	Reason string // the reason for deprecation, or an alternative form
 }
 
+// FuncDeprecationLint creates a DeprecationLint for the given function name.
 func FuncDeprecationLint(fn string, reason string) (lint DeprecationLint) {
 	return DeprecationLint{fn + "()",
 		"[^a-zA-Z0-9_]" + regexp.QuoteMeta(fn) + " *\\(", reason}
