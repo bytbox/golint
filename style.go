@@ -189,7 +189,7 @@ func (v *uncleanImportVisitor) Visit(node interface{}) ast.Visitor {
 func (l *UncleanImportLint) Next() (msg string, err bool) {
 	complaint := <- l.complaints
 	err = !complaint.done
-	msg = fmt.Sprintf("unclean import of %s as %s (may clobber)", 
-			  complaint.path, complaint.name)
+	msg = fmt.Sprintf("unclean import of %s as %s (may clobber)",
+			complaint.path, complaint.name)
 	return
 }
