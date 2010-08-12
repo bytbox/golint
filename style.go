@@ -69,6 +69,7 @@ func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
 // SemicolonLint is a stateless lint that checks that there are no unneeded
 // semicolons.
 type SemicolonLint struct{}
+
 func (lint SemicolonLint) Lint(line string) (msg string, err bool) {
 	if len(line) == 0 {
 		// it's a blank line, just return no error
@@ -112,6 +113,7 @@ func (l *FilesizeLint) Done() (msg string, err bool) {
 type TrailingNewlineLint struct {
 	blankLineCount int
 }
+
 func (l *TrailingNewlineLint) Reset() {
 	l.blankLineCount = 0
 }

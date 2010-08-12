@@ -45,7 +45,7 @@ func main() {
 	}
 	if len(opts.Args) == 0 {
 		// read from standard input
-		DoLint(os.Stdin,"stdin")
+		DoLint(os.Stdin, "stdin")
 	}
 }
 
@@ -55,17 +55,17 @@ func ShowVersion() {
 }
 
 var statelessLinters = map[string]StatelessLinter{
-	"linelen": &LineLengthLint{},
-	"tabsonly": &TabsOnlyLint{},
+	"linelen":            &LineLengthLint{},
+	"tabsonly":           &TabsOnlyLint{},
 	"trailingwhitespace": &TrailingWhitespaceLint{},
-	"semicolon": &SemicolonLint{},
-	"todo": &TodoLint{},
-	"fixme": &FixmeLint{},
-	"xxx": &XXXLint{},
+	"semicolon":          &SemicolonLint{},
+	"todo":               &TodoLint{},
+	"fixme":              &FixmeLint{},
+	"xxx":                &XXXLint{},
 }
 
 var statefulLinters = map[string]StatefulLinter{
-	"filesize": &FilesizeLint{},
+	"filesize":        &FilesizeLint{},
 	"trailingnewline": &TrailingNewlineLint{},
 }
 
@@ -95,14 +95,14 @@ func DoLintFrom(filename string) os.Error {
 		return err
 	}
 	// create a reader on the content, and call DoLint
-	DoLint(strings.NewReader(string(content)),filename)
+	DoLint(strings.NewReader(string(content)), filename)
 	return nil
 }
 
 // a parseResult represents the result of a call to ParseFile
 type parseResult struct {
 	file *ast.File
-	err os.Error
+	err  os.Error
 }
 
 func parse(filename string, content string, c chan parseResult) {
@@ -111,7 +111,7 @@ func parse(filename string, content string, c chan parseResult) {
 	c <- res
 }
 
-func DoLint(reader io.Reader,filename string) os.Error {
+func DoLint(reader io.Reader, filename string) os.Error {
 	// read in the file
 	content, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -153,9 +153,9 @@ func DoLint(reader io.Reader,filename string) os.Error {
 	}
 	// run the parsing linters
 	// First, get the result of the parsing
-	result := <- c
+	result := <-c
 	if result.err != nil {
-		fmt.Printf("%s\n",result.err)
+		fmt.Printf("%s\n", result.err)
 	}
 	astFile := result.file
 	// for each parsingLinter

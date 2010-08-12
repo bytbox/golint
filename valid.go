@@ -7,7 +7,7 @@ import (
 
 // Error represents an error in the source code
 type Error struct {
-	msg string
+	msg  string
 	done bool
 }
 
@@ -20,17 +20,17 @@ func (v parseValidationVisitor) Visit(node interface{}) ast.Visitor {
 	if decl, ok := node.(ast.BadDecl); ok {
 		msg := fmt.Sprintf("bad declaration at %d",
 			decl.Position)
-		v.sync <- Error{msg:msg}
+		v.sync <- Error{msg: msg}
 	}
 	if stmt, ok := node.(ast.BadStmt); ok {
 		msg := fmt.Sprintf("bad statement at %d",
 			stmt.Position)
-		v.sync <- Error{msg:msg}
+		v.sync <- Error{msg: msg}
 	}
 	if expr, ok := node.(ast.BadExpr); ok {
 		msg := fmt.Sprintf("bad expression at %d",
 			expr.Position)
-		v.sync <- Error{msg:msg}
+		v.sync <- Error{msg: msg}
 	}
 	return v
 }
@@ -46,6 +46,7 @@ func (v parseValidationVisitor) WalkOn(file *ast.File) {
 type ValidParseLint struct {
 	sync chan Error
 }
+
 func (l *ValidParseLint) Init(file *ast.File) {
 	// don't buffer, to force a rate limit
 	l.sync = make(chan Error)
@@ -53,7 +54,7 @@ func (l *ValidParseLint) Init(file *ast.File) {
 	go visitor.WalkOn(file)
 }
 func (l *ValidParseLint) Next() (msg string, err bool) {
-	error := <- l.sync
+	error := <-l.sync
 	if error.done {
 		return
 	}
