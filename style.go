@@ -1,3 +1,7 @@
+// Copyright 2010 The Golint Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -138,22 +142,46 @@ func (l *TrailingNewlineLint) Done() (msg string, err bool) {
 	return
 }
 
-// UncleanImportLint is a parsing linter that looks for and reports ugly 
+// UncleanImportLint is a parsing linter that looks for and reports ugly
 // package imports.
 type UncleanImportLint struct {
-	file *ast.File
+	complaints chan uncleanImport
+}
+
+type uncleanImport struct {
+	path string // the given path too the package
+	name string // the name the package was imported as
+	done bool   // are we done?
 }
 
 func (l *UncleanImportLint) Init(file *ast.File) {
-	l.file = file
+	l.complaints = make(chan uncleanImport)
+	v := &uncleanImportVisitor{}
+	v.complaints = l.complaints
+	// start the parse
+	go v.WalkOn(file)
 }
 
-type uncleanImportVisitor struct {}
+type uncleanImportVisitor struct {
+	complaints chan uncleanImport
+}
+
+func (v *uncleanImportVisitor) WalkOn(file *ast.File) {
+	ast.Walk(v,file)
+	v.complaints <- uncleanImport{done: true}
+}
 
 func (v *uncleanImportVisitor) Visit(node interface{}) ast.Visitor {
 	if is, ok := node.(*ast.ImportSpec); ok {
-		path := strings.Trim(string(is.Path.Value),"\"")
-		path = path
+		path := strings.Trim(string(is.Path.Value), "\"")
+		name := is.Name
+		if name != nil { // if name is nil, it's clean
+			namestr := name.Name()
+			if namestr == "." { // XXX check for other forms of clobbering
+				// this will clobber stuff - complain
+				v.complaints <- uncleanImport{path, namestr, false}
+			}
+		}
 	}
 	return v
 }

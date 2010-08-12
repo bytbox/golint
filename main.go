@@ -1,3 +1,7 @@
+// Copyright 2010 The Golint Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main
 
 // TODO catch places a semicolon would be inserted to cause a syntax error
@@ -39,17 +43,17 @@ func main() {
 	// disable, via deletion, the disabled lints
 	for _, dcat := range *disabledCatList {
 		for lname := range statelessLinters {
-			if category(lname)==dcat {
+			if category(lname) == dcat {
 				disabledLintList.Push(lname)
 			}
 		}
 		for lname := range statefulLinters {
-			if category(lname)==dcat {
+			if category(lname) == dcat {
 				disabledLintList.Push(lname)
 			}
 		}
 		for lname := range parsingLinters {
-			if category(lname)==dcat {
+			if category(lname) == dcat {
 				disabledLintList.Push(lname)
 			}
 		}
@@ -61,13 +65,13 @@ func main() {
 	}
 	if *list {
 		for lname := range statelessLinters {
-			fmt.Printf("%s\n",lname)
+			fmt.Printf("%s\n", lname)
 		}
 		for lname := range statefulLinters {
-			fmt.Printf("%s\n",lname)
+			fmt.Printf("%s\n", lname)
 		}
 		for lname := range parsingLinters {
-			fmt.Printf("%s\n",lname)
+			fmt.Printf("%s\n", lname)
 		}
 		os.Exit(0)
 	}
@@ -123,6 +127,7 @@ var parsingLinters = map[string]ParsingLinter{
 	"syntax:validparse": &ValidParseLint{},
 	"deprecated:once": &PackageDeprecationLint{Package: "once",
 		Reason: "use sync.Once"},
+	"style:uncleanimports":     &UncleanImportLint{},
 }
 
 type StatelessLinter interface {
@@ -222,7 +227,7 @@ func DoLint(reader io.Reader, filename string) os.Error {
 		linter.Init(astFile)
 		msg, cont := linter.Next()
 		for cont {
-			if msg[0]==':' {
+			if msg[0] == ':' {
 				fmt.Printf("%s:%s%s\n", filename, lname, msg)
 			} else {
 				fmt.Printf("%s|%s: %s\n", filename, lname, msg)

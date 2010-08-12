@@ -1,3 +1,7 @@
+// Copyright 2010 The Golint Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -18,8 +22,8 @@ type DeprecationLint struct {
 }
 
 func FuncDeprecationLint(fn string, reason string) (lint DeprecationLint) {
-	return DeprecationLint{fn+"()",
-		"[^a-zA-Z0-9_]"+regexp.QuoteMeta(fn)+" *\\(", reason}
+	return DeprecationLint{fn + "()",
+		"[^a-zA-Z0-9_]" + regexp.QuoteMeta(fn) + " *\\(", reason}
 }
 
 
@@ -36,9 +40,26 @@ func (l DeprecationLint) Lint(line string) (msg string, err bool) {
 // MethodDeprecationLint is a parsing linter that looks for and reports usage
 // of deprecated methods.
 type MethodDeprecationLint struct {
-	Type string // the name of the type on which the method is called
+	Type   string // the name of the type on which the method is called
 	Method string // the name of the method
 	Reason string // the reason for deprecation, or an alternative form
+	file   *ast.File
+}
+
+func (l *MethodDeprecationLint) Init(file *ast.File) {
+	l.file = file
+	// TODO start methodDeprecationVisitor-based parse
+}
+
+type methodDeprecationVisitor struct{}
+
+func (v *methodDeprecationVisitor) Visit(node interface{}) ast.Visitor {
+	return v
+}
+
+func (l *MethodDeprecationLint) Next() (msg string, err bool) {
+	// TODO use results of parse
+	return
 }
 
 // PackageDeprecationLint is a parsing linter that looks for and reports usage
@@ -59,12 +80,12 @@ func (l *PackageDeprecationLint) Init(file *ast.File) {
 
 type packageDeprecationVisitor struct {
 	pname string
-	err bool
+	err   bool
 }
 
 func (v *packageDeprecationVisitor) Visit(node interface{}) ast.Visitor {
 	if is, ok := node.(*ast.ImportSpec); ok {
-		path := strings.Trim(string(is.Path.Value),"\"")
+		path := strings.Trim(string(is.Path.Value), "\"")
 		if path == v.pname {
 			v.err = true
 			return nil
@@ -77,7 +98,8 @@ func (l *PackageDeprecationLint) Next() (msg string, err bool) {
 	if l.err {
 		msg, err = fmt.Sprintf(
 			"use of deprecated package %s (%s)",
-			l.Package, l.Reason), true
+			l.Package, l.Reason),
+			true
 		l.err = false
 	}
 	return
