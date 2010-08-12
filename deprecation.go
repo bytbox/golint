@@ -18,7 +18,8 @@ type DeprecationLint struct {
 }
 
 func FuncDeprecationLint(fn string, reason string) (lint DeprecationLint) {
-	return DeprecationLint{fn+"()","[^a-zA-Z0-9_]"+fn+" *\\(", reason}
+	return DeprecationLint{fn+"()",
+		"[^a-zA-Z0-9_]"+regexp.QuoteMeta(fn)+" *\\(", reason}
 }
 
 

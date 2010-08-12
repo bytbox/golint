@@ -33,6 +33,7 @@ func main() {
 		ShowVersion()
 		os.Exit(0)
 	}
+	initLints()
 	if *list {
 		for lname := range statelessLinters {
 			fmt.Printf("%s\n",lname)
@@ -106,7 +107,6 @@ var statelessLinters = map[string]StatelessLinter{
 	"style:tabsonly":           &TabsOnlyLint{},
 	"style:trailingwhitespace": &TrailingWhitespaceLint{},
 	"style:semicolon":          &SemicolonLint{},
-	"deprecated:new":           FuncDeprecationLint("new", "use &T{}"),
 	"todo:todo":                &TodoLint{},
 	"todo:fixme":               &FixmeLint{},
 	"todo:xxx":                 &XXXLint{},

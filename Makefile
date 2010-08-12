@@ -8,6 +8,7 @@ golint: main.${O}
 	${LD} -o $@ main.${O}
 
 MAINFILES = main.go \
+	data.go \
 	style.go \
 	valid.go \
 	comments.go \
