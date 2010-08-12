@@ -13,7 +13,8 @@ soon.
 
 In the long term, golint hopes to be compatible with gofmt in the sense above,
 although running gofmt on code that does not completely pass golint may
-increase the number of errors.
+increase the number of errors, and golint will never object to all code that
+gofmt would change.
 
 
 Dependencies
