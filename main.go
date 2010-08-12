@@ -18,10 +18,10 @@ var version = "0.0.4"
 
 // options
 var (
-	showVersion = opts.Longflag("version",
-		"display version information and exit")
-	verbose = opts.Flag("v", "verbose",
-		"print verbose output to standard error")
+	disabledLintList = opts.Shortmulti("d", "disabled lints", "lint")
+	disabledCatList  = opts.Shortmulti("D", "disabled lint categories", "category")
+	showVersion      = opts.Longflag("version", "display version information and exit")
+	verbose          = opts.Flag("v", "verbose", "print verbose output to standard error")
 )
 
 func main() {
@@ -31,6 +31,29 @@ func main() {
 	if *showVersion {
 		ShowVersion()
 		os.Exit(0)
+	}
+	// disable, via deletion, the disabled lints
+	for _, dcat := range *disabledCatList {
+		for lname := range statelessLinters {
+			if category(lname)==dcat {
+				disabledLintList.Push(lname)
+			}
+		}
+		for lname := range statefulLinters {
+			if category(lname)==dcat {
+				disabledLintList.Push(lname)
+			}
+		}
+		for lname := range parsingLinters {
+			if category(lname)==dcat {
+				disabledLintList.Push(lname)
+			}
+		}
+	}
+	for _, dlint := range *disabledLintList {
+		statelessLinters[dlint] = nil, false
+		statefulLinters[dlint] = nil, false
+		parsingLinters[dlint] = nil, false
 	}
 	if *verbose {
 		fmt.Fprintf(os.Stderr,
@@ -59,24 +82,32 @@ func ShowVersion() {
 	fmt.Printf("golint v%s\n", version)
 }
 
+// category returns the category of a lint name
+func category(lname string) string {
+	parts := strings.Split(lname, ":", 2)
+	return parts[0]
+}
+
 var statelessLinters = map[string]StatelessLinter{
-	"linelen":            &LineLengthLint{},
-	"tabsonly":           &TabsOnlyLint{},
-	"trailingwhitespace": &TrailingWhitespaceLint{},
-	"semicolon":          &SemicolonLint{},
-	"deprecated:new":     FuncDeprecationLint("new","use &T{}"),
-	"todo":               &TodoLint{},
-	"fixme":              &FixmeLint{},
-	"xxx":                &XXXLint{},
+	"style:linelen":            &LineLengthLint{},
+	"style:tabsonly":           &TabsOnlyLint{},
+	"style:trailingwhitespace": &TrailingWhitespaceLint{},
+	"style:semicolon":          &SemicolonLint{},
+	"deprecated:new":           FuncDeprecationLint("new", "use &T{}"),
+	"todo:todo":                &TodoLint{},
+	"todo:fixme":               &FixmeLint{},
+	"todo:xxx":                 &XXXLint{},
 }
 
 var statefulLinters = map[string]StatefulLinter{
-	"filesize":        &FilesizeLint{},
-	"trailingnewline": &TrailingNewlineLint{},
+	"style:filesize":        &FilesizeLint{},
+	"style:trailingnewline": &TrailingNewlineLint{},
 }
 
 var parsingLinters = map[string]ParsingLinter{
-	"validparse": &ValidParseLint{},
+	"syntaxvalidparse": &ValidParseLint{},
+	"deprecated:once": &PackageDeprecationLint{Package: "once",
+		Reason: "use sync.Once"},
 }
 
 type StatelessLinter interface {
@@ -134,42 +165,42 @@ func DoLint(reader io.Reader, filename string) os.Error {
 	lines := strings.Split(string(content), "\n", -1)
 	for lineno, line := range lines {
 		// run through the stateless linters
-		for _, linter := range statelessLinters {
+		for lname, linter := range statelessLinters {
 			msg, err := linter.Lint(line)
 			if err {
-				fmt.Printf("%s:%d: %s\n",
-					filename, lineno+1, msg)
+				fmt.Printf("%s:%d: %s (%s)\n",
+					filename, lineno+1, msg, lname)
 			}
 		}
 		// run through the stateful linters
-		for _, linter := range statefulLinters {
+		for lname, linter := range statefulLinters {
 			msg, err := linter.Lint(line, lineno)
 			if err {
-				fmt.Printf("%s: %s\n",
-					filename, msg)
+				fmt.Printf("%s: %s (%s)\n",
+					filename, msg, lname)
 			}
 		}
 	}
 	// tell all the stateful linters we're done
-	for _, linter := range statefulLinters {
+	for lname, linter := range statefulLinters {
 		msg, err := linter.Done()
 		if err {
-			fmt.Printf("%s: %s\n", filename, msg)
+			fmt.Printf("%s: %s (%s)\n", filename, msg, lname)
 		}
 	}
 	// run the parsing linters
 	// First, get the result of the parsing
 	result := <-c
 	if result.err != nil {
-		fmt.Printf("%s\n", result.err)
+		fmt.Printf("%s (in parser)\n", result.err)
 	}
 	astFile := result.file
 	// for each parsingLinter
-	for _, linter := range parsingLinters {
+	for lname, linter := range parsingLinters {
 		linter.Init(astFile)
 		msg, cont := linter.Next()
 		for cont {
-			fmt.Printf("%s: %s\n", filename, msg)
+			fmt.Printf("%s: %s (%s)\n", filename, msg, lname)
 			msg, cont = linter.Next()
 		}
 	}
