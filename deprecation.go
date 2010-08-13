@@ -45,22 +45,40 @@ type MethodDeprecationLint struct {
 	Type   string // the name of the type on which the method is called
 	Method string // the name of the method
 	Reason string // the reason for deprecation, or an alternative form
-	file   *ast.File
+	uses   chan deprecatedMethodUse
+}
+
+type deprecatedMethodUse struct {
+	lineno int
 }
 
 func (l *MethodDeprecationLint) Init(file *ast.File) {
-	l.file = file
-	// TODO start methodDeprecationVisitor-based parse
+	v := &methodDeprecationVisitor{}
+	v.uses = make(chan deprecatedMethodUse)
+	l.uses = v.uses
+	go v.WalkOn(file)
 }
 
-type methodDeprecationVisitor struct{}
+type methodDeprecationVisitor struct{
+	uses chan deprecatedMethodUse
+}
+
+func (v *methodDeprecationVisitor) WalkOn(file *ast.File) {
+	ast.Walk(v, file)
+	// signal complete
+	v.uses <- deprecatedMethodUse{-1}
+}
 
 func (v *methodDeprecationVisitor) Visit(node interface{}) ast.Visitor {
+	
+	//v.uses <- deprecatedMethodUse{-1}
 	return v
 }
 
 func (l *MethodDeprecationLint) Next() (msg string, err bool) {
-	// TODO use results of parse
+	use := <- l.uses
+	err = use.lineno>=0
+	msg = fmt.Sprintf("hi")
 	return
 }
 

@@ -5,7 +5,7 @@
 package main
 
 // TODO catch places a semicolon would be inserted to cause a syntax error
-// TODO unused warnings
+// TODO unused warnings and flow analysis (spotting deadlocks)
 // TODO MethodDepracationLint
 
 import (
