@@ -42,6 +42,7 @@ func initMethodDeprecations() {
 
 var funcDeprecations = `
 new                                     use &T{}
+panicln                                 use panic(fmt.Sprintf())
 `
 
 var methodDeprecations = `
