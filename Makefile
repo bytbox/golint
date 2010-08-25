@@ -4,7 +4,7 @@
 
 .PHONY: all clean install
 
-include ${GOROOT}/src/Make.${GOARCH}
+include ${GOROOT}/src/Make.inc
 
 all: golint
 
