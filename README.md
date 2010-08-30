@@ -21,7 +21,10 @@ Dependencies
 ------------
 
 Golint uses opts for option parsing, available here:
-<http://github.com/bytbox/opts>.
+<http://opts-go.googlecode.com/>. You can install it automatically with
+`goinstall`:
+
+    goinstall -u opts-go.googlecode.com/hg
 
 
 Bugs
