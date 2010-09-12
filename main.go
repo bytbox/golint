@@ -38,7 +38,6 @@ func main() {
 		ShowVersion()
 		os.Exit(0)
 	}
-	initLints()
 	// disable, via deletion, the disabled lints
 	for _, dcat := range *disabledCatList {
 		for lname := range statelessLinters {
@@ -124,8 +123,6 @@ var statefulLinters = map[string]StatefulLinter{
 
 var parsingLinters = map[string]ParsingLinter{
 	"syntax:validparse": &ValidParseLint{},
-	"deprecated:once": &PackageDeprecationLint{Package: "once",
-		Reason: "use sync.Once"},
 	"style:uncleanimports":     &UncleanImportLint{},
 }
 
