@@ -11,9 +11,9 @@ import (
 
 // TodoLint is a stateless linter that checks for and prints out lines that
 // have "TODO" notices.
-type TodoLint struct{}
+type TodoLint struct{Stateless}
 
-func (TodoLint) Lint(line string) (msg string, err bool) {
+func (TodoLint) Lint(line string, _ int) (msg string, err bool) {
 	if m, _ := regexp.MatchString("TODO[ !:]", line); m {
 		msg, err = strings.Trim(line, "\t"), true
 	}
@@ -22,9 +22,9 @@ func (TodoLint) Lint(line string) (msg string, err bool) {
 
 // FixmeLint is a stateless linter that checks for and prints out lines that
 // have "FIXM"E notices.
-type FixmeLint struct{}
+type FixmeLint struct{Stateless}
 
-func (FixmeLint) Lint(line string) (msg string, err bool) {
+func (FixmeLint) Lint(line string, _ int) (msg string, err bool) {
 	if m, _ := regexp.MatchString("FIXME[ !:]", line); m {
 		msg, err = strings.Trim(line, "\t"), true
 	}
@@ -33,9 +33,9 @@ func (FixmeLint) Lint(line string) (msg string, err bool) {
 
 // XXXLint is a stateless linter that checks for and prints out lines that
 // have XXX-style "TODO" notices (a convention in Java, at least).
-type XXXLint struct{}
+type XXXLint struct{Stateless}
 
-func (XXXLint) Lint(line string) (msg string, err bool) {
+func (XXXLint) Lint(line string, _ int) (msg string, err bool) {
 	if m, _ := regexp.MatchString("XXX[ !:]", line); m {
 		msg, err = strings.Trim(line, "\t"), true
 	}

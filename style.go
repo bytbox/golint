@@ -12,9 +12,11 @@ import (
 
 // LineLengthLint is a stateless lint that checks that line lengths are
 // reasonable.
-type LineLengthLint struct{}
+type LineLengthLint struct{
+	Stateless
+}
 
-func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
+func (lint LineLengthLint) Lint(line string, _ int) (msg string, err bool) {
 	length := 0
 	// count characters - a tab is eight characters
 	chars := strings.Split(line, "", -1)
@@ -36,9 +38,9 @@ func (lint LineLengthLint) Lint(line string) (msg string, err bool) {
 
 // TabsOnlyLint is a stateless lint that checks that only tabs are used to
 // indent lines.
-type TabsOnlyLint struct{}
+type TabsOnlyLint struct{Stateless}
 
-func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
+func (lint TabsOnlyLint) Lint(line string, _ int) (msg string, err bool) {
 	chars := strings.Split(line, "", -1)
 	for _, c := range chars {
 		if c == " " {
@@ -55,9 +57,9 @@ func (lint TabsOnlyLint) Lint(line string) (msg string, err bool) {
 
 // TrailingWhitespaceLint is a stateless lint that checks that there is no
 // trailing whitespace.
-type TrailingWhitespaceLint struct{}
+type TrailingWhitespaceLint struct{Stateless}
 
-func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
+func (lint TrailingWhitespaceLint) Lint(line string, _ int) (msg string, err bool) {
 	if len(line) == 0 {
 		// it's a blank line, just return no error
 		return
@@ -73,9 +75,9 @@ func (lint TrailingWhitespaceLint) Lint(line string) (msg string, err bool) {
 
 // SemicolonLint is a stateless lint that checks that there are no unneeded
 // semicolons.
-type SemicolonLint struct{}
+type SemicolonLint struct{Stateless}
 
-func (lint SemicolonLint) Lint(line string) (msg string, err bool) {
+func (lint SemicolonLint) Lint(line string, _ int) (msg string, err bool) {
 	if len(line) == 0 {
 		// it's a blank line, just return no error
 		return

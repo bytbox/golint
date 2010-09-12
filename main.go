@@ -40,12 +40,7 @@ func main() {
 	}
 	// disable, via deletion, the disabled lints
 	for _, dcat := range *disabledCatList {
-		for lname := range statelessLinters {
-			if category(lname) == dcat {
-				disabledLintList.Push(lname)
-			}
-		}
-		for lname := range statefulLinters {
+		for lname := range lineLinters {
 			if category(lname) == dcat {
 				disabledLintList.Push(lname)
 			}
@@ -57,15 +52,11 @@ func main() {
 		}
 	}
 	for _, dlint := range *disabledLintList {
-		statelessLinters[dlint] = nil, false
-		statefulLinters[dlint] = nil, false
+		lineLinters[dlint] = nil, false
 		parsingLinters[dlint] = nil, false
 	}
 	if *list {
-		for lname := range statelessLinters {
-			fmt.Printf("%s\n", lname)
-		}
-		for lname := range statefulLinters {
+		for lname := range lineLinters {
 			fmt.Printf("%s\n", lname)
 		}
 		for lname := range parsingLinters {
@@ -75,10 +66,9 @@ func main() {
 	}
 	if *verbose {
 		fmt.Fprintf(os.Stderr,
-			"Beginning lint with %d stateless, "+
-				"%d stateful, and %d parsing linters\n",
-			len(statelessLinters),
-			len(statefulLinters),
+			"Beginning lint with %d line-based "+
+				"and %d parsing linters\n",
+			len(lineLinters),
 			len(parsingLinters))
 	}
 	for _, filename := range opts.Args {
@@ -106,7 +96,7 @@ func category(lname string) string {
 	return parts[0]
 }
 
-var statelessLinters = map[string]StatelessLinter{
+var lineLinters = map[string]LineLinter{
 	"style:linelen":            &LineLengthLint{},
 	"style:tabsonly":           &TabsOnlyLint{},
 	"style:trailingwhitespace": &TrailingWhitespaceLint{},
@@ -114,11 +104,8 @@ var statelessLinters = map[string]StatelessLinter{
 	"todo:todo":                &TodoLint{},
 	"todo:fixme":               &FixmeLint{},
 	"todo:xxx":                 &XXXLint{},
-}
-
-var statefulLinters = map[string]StatefulLinter{
-	"style:filesize":        &FilesizeLint{},
-	"style:trailingnewline": &TrailingNewlineLint{},
+	"style:filesize":           &FilesizeLint{},
+	"style:trailingnewline":    &TrailingNewlineLint{},
 }
 
 var parsingLinters = map[string]ParsingLinter{
@@ -126,11 +113,12 @@ var parsingLinters = map[string]ParsingLinter{
 	"style:uncleanimports":     &UncleanImportLint{},
 }
 
-type StatelessLinter interface {
-	Lint(string) (string, bool)
-}
+type Stateless struct{}
 
-type StatefulLinter interface {
+func (Stateless) Reset() {}
+func (Stateless) Done() (msg string, err bool) {return}
+
+type LineLinter interface {
 	Lint(string, int) (string, bool)
 	Reset()
 	Done() (string, bool)
@@ -176,8 +164,8 @@ func DoLint(reader io.Reader, filename string) os.Error {
 	if err != nil {
 		return err
 	}
-	// prepare all the stateful linters
-	for _, linter := range statefulLinters {
+	// prepare all the line-based linters
+	for _, linter := range lineLinters {
 		linter.Reset()
 	}
 	// start parsing in parallel
@@ -186,16 +174,8 @@ func DoLint(reader io.Reader, filename string) os.Error {
 	// for each line
 	lines := strings.Split(string(content), "\n", -1)
 	for lineno, line := range lines {
-		// run through the stateless linters
-		for lname, linter := range statelessLinters {
-			msg, err := linter.Lint(line)
-			if err {
-				fmt.Printf("%s:%d|%s: %s\n",
-					filename, lineno+1, lname, msg)
-			}
-		}
-		// run through the stateful linters
-		for lname, linter := range statefulLinters {
+		// run through the line-based linters
+		for lname, linter := range lineLinters {
 			msg, err := linter.Lint(line, lineno)
 			if err {
 				fmt.Printf("%s|%s: %s\n",
@@ -203,8 +183,8 @@ func DoLint(reader io.Reader, filename string) os.Error {
 			}
 		}
 	}
-	// tell all the stateful linters we're done
-	for lname, linter := range statefulLinters {
+	// tell all the line-based linters we're done
+	for lname, linter := range lineLinters {
 		msg, err := linter.Done()
 		if err {
 			fmt.Printf("%s|%s: %s\n", filename, lname, msg)
