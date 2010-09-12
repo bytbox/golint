@@ -15,6 +15,7 @@ MAINFILES = main.go \
 	style.go \
 	valid.go \
 	comments.go \
+	deprecation.go \
 
 main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
