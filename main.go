@@ -23,16 +23,16 @@ var version = "0.0.4"
 
 // options
 var (
-	disabledLintList = opts.Shortmulti("d", "disabled lints", "lint")
-	disabledCatList  = opts.Shortmulti("D", "disabled lint categories", "category")
-	showVersion      = opts.Longflag("version", "display version information and exit")
+	disabledLintList = opts.ShortMulti("d", "disabled lints", "lint")
+	disabledCatList  = opts.ShortMulti("D", "disabled lint categories", "category")
+	showVersion      = opts.LongFlag("version", "display version information and exit")
 	list             = opts.Flag("l", "list", "list linters and exit")
 	verbose          = opts.Flag("v", "verbose", "print verbose output to standard error")
 )
 
 func main() {
 	// Do the argument parsing
-	opts.Usage("[sourcefile...]")
+	opts.Usage = "[sourcefile...]"
 	opts.Parse()
 	if *showVersion {
 		ShowVersion()
@@ -162,13 +162,13 @@ type parseResult struct {
 }
 
 func parse(filename string, content string, c chan parseResult) {
-	file, err := parser.ParseFile(filename, content, nil, 0)
+	file, err := parser.ParseFile(filename, content, 0)
 	res := parseResult{file, err}
 	c <- res
 }
 
 func doParse(filename string, content string) parseResult {
-	file, err := parser.ParseFile(filename, content, nil, 0)
+	file, err := parser.ParseFile(filename, content, 0)
 	res := parseResult{file, err}
 	return res
 }

@@ -176,7 +176,7 @@ func (v *uncleanImportVisitor) Visit(node interface{}) ast.Visitor {
 		path := strings.Trim(string(is.Path.Value), "\"")
 		name := is.Name
 		if name != nil { // if name is nil, it's clean
-			namestr := name.Name()
+			namestr := name.Name
 			if namestr == "." { // XXX check for other forms of clobbering
 				// this will clobber stuff - complain
 				v.complaints <- uncleanImport{path, namestr, false}
