@@ -6,7 +6,7 @@ package main
 
 // TODO catch places a semicolon would be inserted to cause a syntax error
 // TODO unused warnings and flow analysis (spotting deadlocks)
-// TODO MethodDepracationLint
+// TODO MethodDeprecationLint
 
 import (
 	"fmt"
@@ -109,14 +109,19 @@ var lineLinters = map[string]LineLinter{
 }
 
 var parsingLinters = map[string]ParsingLinter{
-	"syntax:validparse": &ValidParseLint{},
-	"style:uncleanimports":     &UncleanImportLint{},
+	"syntax:validparse":    &ValidParseLint{},
+	"style:uncleanimports": &UncleanImportLint{},
+
+	// function deprecations
+	"deprecated:nothing": FuncDep("Nothing", ""),
+
+	// method deprecations
 }
 
 type Stateless struct{}
 
-func (Stateless) Reset() {}
-func (Stateless) Done() (msg string, err bool) {return}
+func (Stateless) Reset()                       {}
+func (Stateless) Done() (msg string, err bool) { return }
 
 type LineLinter interface {
 	Lint(string, int) (string, bool)
@@ -203,7 +208,7 @@ func DoLint(reader io.Reader, filename string) os.Error {
 		linter.Init(astFile)
 		msg, cont := linter.Next()
 		for cont {
-			if len(msg)>0 && msg[0] == ':' {
+			if len(msg) > 0 && msg[0] == ':' {
 				fmt.Printf("%s:%s%s\n", filename, lname, msg)
 			} else {
 				fmt.Printf("%s|%s: %s\n", filename, lname, msg)
