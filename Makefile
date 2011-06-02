@@ -12,13 +12,15 @@ golint: main.${O}
 	${LD} -o $@ main.${O}
 
 MAINFILES = main.go \
-	style.go \
-	valid.go \
-	comments.go \
-	deprecation.go \
+            rules.go \
+            util.go
+            
 
 main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
+
+rules.go: genrules.pl
+	perl genrules.pl
 
 install: /usr/local/bin/golint
 
@@ -26,4 +28,5 @@ install: /usr/local/bin/golint
 	cp $? $@
 
 clean:
-	rm -f golint *.${O}
+	rm -f golint *.${O} rules.go
+

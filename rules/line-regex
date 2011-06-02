@@ -1,0 +1,8 @@
+style:trailing-whitespace
+	[ \t]$
+	Trailing whitespace found
+
+style:semicolon
+	;$
+	Unnecessary semicolon use is discouraged
+

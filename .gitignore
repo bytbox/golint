@@ -1,2 +1,4 @@
 *.6
 golint
+.*.swp
+rules.go
