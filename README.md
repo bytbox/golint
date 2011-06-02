@@ -17,15 +17,6 @@ increase the number of errors, and golint will never object to all code that
 gofmt would change.
 
 
-Dependencies
-------------
-
-Golint uses opts for option parsing, available here:
-<http://opts-go.googlecode.com/>. You can install it automatically with
-`goinstall`:
-
-    goinstall -u opts-go.googlecode.com/hg
-
 
 Bugs
 ----
