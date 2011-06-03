@@ -6,3 +6,7 @@ style:semicolon
 	;$
 	Unnecessary semicolon use is discouraged
 
+style:comma-whitespace
+	,[^ ]
+	Whitespach should follow a comma
+

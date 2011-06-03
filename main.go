@@ -50,29 +50,35 @@ func main() {
 	close(errs)
 
 	// Complain about any errors
+	for err := range errs {
+		fmt.Fprintf(os.Stderr, "%s", err)
+	}
 }
 
 func LintFiles(files []string, errs chan os.Error) {
+	linelintDone := make(chan int)
+
 	var err os.Error
 	lintChan := make([]chan Lint, len(LineLinters))
-	lc := make(chan Lint)
-	lineChan := make([]chan string, len(LineLinters))
+	lineChan := make([]chan Line, len(LineLinters))
+	lintRoot := make(chan Lint)
 	for i, ll := range LineLinters {
-		lineChan[i] = make(chan string)
+		lineChan[i] = make(chan Line)
 		lintChan[i] = make(chan Lint)
 		go ll.RunLint(lineChan[i], lintChan[i])
 	}
+
+	// line-lint all files
 	go func() {
-		// line-lint all files
 		for _, fname := range files {
 			var lines []string
 			if lines, err = ReadFileLines(fname); err != nil {
 				errs <- err
 				continue
 			}
-			for _, line := range lines {
+			for lineno, line := range lines {
 				for _, c := range lineChan {
-					c <- line
+					c <- Line{Location{fname, lineno}, line}
 				}
 			}
 		}
@@ -81,19 +87,22 @@ func LintFiles(files []string, errs chan os.Error) {
 		}
 	}()
 
-	go func() {
-		for _, c := range lintChan {
+	for _, c := range lintChan {
+		go func() {
 			for lint := range c {
-				lc <- lint
+				lintRoot <- lint
 			}
-		}
-		close(lc)
-	}()
-
-	for lint := range lc {
-		fmt.Printf("%s\n", lint)
+		}()
 	}
 
+	go func() {
+		for lint := range lintRoot {
+			fmt.Printf("%s\n", lint)
+		}
+		linelintDone <- 1
+	}()
+
+	<-linelintDone
 }
 
 // Types of linters
@@ -109,7 +118,14 @@ type LinterName struct {
 }
 
 func (ln LinterName) String() string {
-	return fmt.Sprintf("%s:%s: %s", ln.Category, ln.Name, ln.Description)
+	return fmt.Sprintf("%s:%s: %s",ln.Category, ln.Name, ln.Description)
+}
+
+// Represents a line of code. Describes both the location of the code and the
+// code itself.
+type Line struct {
+	Location
+	line string
 }
 
 // Represents a line-based linter (which may or may not hold state).
@@ -119,7 +135,7 @@ func (ln LinterName) String() string {
 // benefit from i.e. parsing capabilities.
 type LineLinter interface {
 	String() string
-	RunLint(chan string, chan Lint)
+	RunLint(chan Line, chan Lint)
 }
 
 // A line-based linter using regular expressions
@@ -132,10 +148,10 @@ func (rl RegexLinter) String() string {
 	return fmt.Sprintf("%s (%s)", rl.LinterName.String(), rl.Regex)
 }
 
-func (rl RegexLinter) RunLint(text chan string, lints chan Lint) {
+func (rl RegexLinter) RunLint(text chan Line, lints chan Lint) {
 	for line := range text {
-		if matches, _ := regexp.Match(rl.Regex, []byte(line)); matches {
-			lints <- LineLint{rl, Location{"", 0}, ""}
+		if matches, _ := regexp.Match(rl.Regex, []byte(line.line)); matches {
+			lints <- LineLint{rl, line.Location, ""}
 		}
 	}
 	close(lints)

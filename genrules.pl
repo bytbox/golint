@@ -25,7 +25,7 @@ while (<FIN>) {
 	$name2 =~ s/-/_/g;
 
 print RULES <<END;
-RegexLinter{LinterName{"$category", "$name2", "$desc"}, "$regex"},
+RegexLinter{LinterName{"$category", "$name2", "$desc"}, `$regex`},
 END
 
 	<FIN>;
