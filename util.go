@@ -33,3 +33,9 @@ func FilterSuffix(suffix string, strs []string) []string {
 	return newstrs[0:i]
 }
 
+// Call two nullary functions in order.
+func Seq(a func(), b func()) {
+	a()
+	b()
+}
+

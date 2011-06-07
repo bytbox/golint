@@ -8,5 +8,5 @@ style:semicolon
 
 style:comma-whitespace
 	,[^ ]
-	Whitespach should follow a comma
+	Whitespace should follow a comma
 
