@@ -7,6 +7,14 @@ style:semicolon
 	Unnecessary semicolon use is discouraged
 
 style:comma-whitespace
-	,[^ ]
+	,[^ \t]
 	Whitespace should follow a comma
+
+style:tabs-only
+	^\t* 
+	Only tabs should be used for indentation
+
+style:embedded-tabs
+	[^ \t]
+	Tabs should only be used for indentation
 
