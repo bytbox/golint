@@ -11,10 +11,10 @@ style:comma-whitespace
 	Whitespace should follow a comma
 
 style:tabs-only
-	^\t* 
+	^\t* +
 	Only tabs should be used for indentation
 
 style:embedded-tabs
-	[^ \t]
+	[^ \t]\t
 	Tabs should only be used for indentation
 
