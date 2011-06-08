@@ -19,6 +19,8 @@ var (
 )
 
 func main() {
+	errs := make(chan os.Error)
+
 	flag.Parse()
 	args := flag.Args()
 
@@ -37,7 +39,7 @@ func main() {
 		files = make([]string, 1)
 		files[0] = "."
 	}
-	files = FilterSuffix(".go", ExpandFiles(args))
+	files = FilterSuffix(".go", ExpandFiles(files))
 	if *verbose {
 		for _, f := range files {
 			fmt.Printf("%s ", f)
@@ -45,7 +47,6 @@ func main() {
 		fmt.Printf("\n")
 	}
 
-	errs := make(chan os.Error)
 	LintFiles(files, errs)
 	close(errs)
 
