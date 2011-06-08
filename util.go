@@ -1,10 +1,11 @@
 package main
 
 import (
+	"container/vector"
 	"io/ioutil"
 	"strings"
 	"os"
-	"container/vector"
+	"path"
 )
 
 // Misc. utility functions
@@ -53,14 +54,15 @@ func Seq(a func(), b func()) {
 }
 
 // List the names of all regular files in a given directory.
-func listFiles(filename string) *vector.StringVector {
+func listFiles(fname string) *vector.StringVector {
 	files := new(vector.StringVector)
-	f, _ := os.Open(filename)
+	f, _ := os.Open(fname)
 	dn, _ := f.Readdirnames(-1)
 	for _, filename := range dn {
 		if filename[0] == '.' {
 			continue
 		}
+		filename = path.Join(fname, filename)
 		info, err := os.Stat(filename)
 		if err != nil {
 			continue
