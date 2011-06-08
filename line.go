@@ -23,11 +23,21 @@ type LineLinter interface {
 // use this as a base (for readability and other reasons).
 type SimpleLineLinter struct {
 	LinterName
-
+	lintFunc func(string) bool
 }
 
 func (sl SimpleLineLinter) String() string {
 	return sl.LinterName.String()
+}
+
+func (sl SimpleLineLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
+	wg.Add(1)
+	for line := range text {
+		if sl.lintFunc(line.line) {
+			lints <- LineLint{sl, line.Location, ""}
+		}
+	}
+	wg.Done()
 }
 
 // A line-based linter using regular expressions
