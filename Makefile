@@ -12,6 +12,7 @@ golint: main.${O}
 	${LD} -o $@ main.${O}
 
 MAINFILES = main.go \
+            line.go \
             rules.go \
             util.go
             

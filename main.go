@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"regexp"
 	"sync"
 )
 
@@ -58,6 +57,8 @@ func main() {
 
 func LintFiles(files []string, errs chan os.Error) {
 	lintWG := new(sync.WaitGroup)
+	lintWG.Add(1)
+
 	lintRoot := make(chan Lint)
 	lintDone := make(chan int)
 
@@ -73,7 +74,7 @@ func LintFiles(files []string, errs chan os.Error) {
 		close(lintRoot)
 	}()
 
-	go func() {
+	go func() { // Print out lints
 		for lint := range lintRoot {
 			fmt.Printf("%s\n", lint)
 		}
@@ -81,7 +82,6 @@ func LintFiles(files []string, errs chan os.Error) {
 	}()
 
 	// line-lint all files
-	lintWG.Add(1)
 	for _, fname := range files {
 		var lines []string
 		if lines, err = ReadFileLines(fname); err != nil {
@@ -95,7 +95,7 @@ func LintFiles(files []string, errs chan os.Error) {
 		}
 	}
 
-	for _, c := range lineChan {
+	for _, c := range lineChan { // close all lineChans
 		close(c)
 	}
 
@@ -111,6 +111,7 @@ type Linter interface {
 	String() string
 }
 
+// Name and description of a linter.
 type LinterName struct {
 	Category    string
 	Name        string
@@ -128,36 +129,6 @@ type Line struct {
 	line string
 }
 
-// Represents a line-based linter (which may or may not hold state).
-//
-// As a general rule, LineLinter should only be used for linters which do /not/
-// need to hold state - those linters that must hold state would generally
-// benefit from i.e. parsing capabilities.
-type LineLinter interface {
-	String() string
-	RunLint(chan Line, chan Lint, *sync.WaitGroup)
-}
-
-// A line-based linter using regular expressions
-type RegexLinter struct {
-	LinterName
-	Regex string
-}
-
-func (rl RegexLinter) String() string {
-	return fmt.Sprintf("%s (%s)", rl.LinterName.String(), rl.Regex)
-}
-
-func (rl RegexLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
-	wg.Add(1)
-	for line := range text {
-		if matches, _ := regexp.Match(rl.Regex, []byte(line.line)); matches {
-			lints <- LineLint{rl, line.Location, ""}
-		}
-	}
-	wg.Done()
-}
-
 type Lint interface {
 	String() string
 }
@@ -172,12 +143,3 @@ func (loc Location) String() string {
 	return fmt.Sprintf("%s:%d", loc.filename, loc.lineno)
 }
 
-type LineLint struct {
-	linter Linter
-	Location
-	issue  string
-}
-
-func (lint LineLint) String() string {
-	return fmt.Sprintf("%s at %s", lint.linter.String(), lint.Location)
-}
