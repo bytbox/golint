@@ -21,11 +21,12 @@ while (<FIN>) {
 
 	@nameparts = split /:/, $name;
 	$category = $nameparts[0];
-	$name2 = $nameparts[1];
+	$name = $nameparts[1];
+	$name2 = $name;
 	$name2 =~ s/-/_/g;
 
 print RULES <<END;
-RegexLinter{LinterName{"$category", "$name2", "$desc"}, `$regex`},
+RegexLinter{LinterName{"$category", "$name", "$desc"}, `$regex`},
 END
 
 	<FIN>;
