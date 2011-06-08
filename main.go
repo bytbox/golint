@@ -91,7 +91,7 @@ func LintFiles(files []string, errs chan os.Error) {
 		}
 		for _, c := range lineChan {
 			for lineno, line := range lines {
-				c <- Line{Location{fname, lineno}, line}
+				c <- Line{Location{fname, lineno+1}, line}
 			}
 		}
 	}
