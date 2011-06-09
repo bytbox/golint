@@ -11,6 +11,11 @@ import (
 	"sync"
 )
 
+// TODO 'compatilbility' with gofix
+// TODO check for (potentially) overlapping imports
+// TODO pattern-matching in ParsingLinter
+// TODO use actual lints in checking for valid parse
+
 var version = "0.1.0"
 
 var (
