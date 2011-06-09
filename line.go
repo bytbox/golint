@@ -1,3 +1,7 @@
+// Copyright 2011 The Golint Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -40,9 +44,13 @@ func (sl SimpleLineLinter) RunLint(text chan Line, lints chan Lint, wg *sync.Wai
 	wg.Done()
 }
 
-// A line-based linter using regular expressions
+// A line-based linter using regular expressions.
+//
+// The linter returns one piece of lint for every line matching the regular
+// expression - multiple matches in a single line are ignored.
 type RegexLinter struct {
 	LinterName
+	// the regular expression to check for
 	Regex string
 }
 

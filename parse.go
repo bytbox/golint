@@ -12,10 +12,12 @@ import (
 	"sync"
 )
 
+// Conversion between ast.Visitor and the simpler type func(ast.Node) (bool).
 type SimpleVisitor struct {
 	visitFunc func(node ast.Node) bool
 }
 
+// Returns itself if 'visitFunc' returns true - otherwise returns nil.
 func (v SimpleVisitor) Visit(node ast.Node) ast.Visitor {
 	if v.visitFunc(node) {
 		return v
