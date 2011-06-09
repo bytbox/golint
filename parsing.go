@@ -9,6 +9,7 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -63,8 +64,10 @@ func RunParsingLinters(filename string,
 			go linter.RunLint(nodeChan, lintRoot, lintWG)
 
 			ast.Walk(visitor(func (node ast.Node) bool {
+				nodeChan <- node
 				return true
 			}), file)
+			close(nodeChan)
 			lintWG.Done()
 		}()
 	}
@@ -89,7 +92,34 @@ func (oil OverlappingImportsLinter) String() string {
 	return "hi"
 }
 
-func (oil OverlappingImportsLinter) RunLint(chan ast.Node, chan Lint, *sync.WaitGroup) {
+func (oil OverlappingImportsLinter) RunLint(
+		nodes chan ast.Node,
+		lints chan Lint,
+		wg *sync.WaitGroup) {
+	imports := make(map[string]string)
+	for node := range nodes {
+		switch node.(type) {
+		case (*ast.ImportSpec):
+			is := node.(*ast.ImportSpec)
+			if is.Name != nil {
+				imports[is.Path.Value] = is.Name.String()
+			} else {
+				path := strings.Trim(is.Path.Value, "\"")
+				parts := strings.Split(path, "/", -1)
+				imports[is.Path.Value] = parts[len(parts)-1]
+			}
+		}
+	}
 
+	localNameCount := make(map[string]int)
+	for _, localName := range imports {
+		localNameCount[localName] += 1
+	}
+
+	for localName, count := range localNameCount {
+		if count > 1 {
+			println("Yikes!", localName)
+		}
+	}
 }
 
