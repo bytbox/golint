@@ -38,7 +38,12 @@ while (<FIN>) {
 	$desc =~ s/^\t//;
 	($category, $name, $name2) = getNameparts $name;
 	print RULES <<END;
-RegexLinter{LinterName{"$category", "$name", "$desc"}, `$regex`},
+RegexLinter{
+\tLinterName{
+\t\t"$category",
+\t\t"$name",
+\t\t"$desc"},
+\t`$regex`},
 END
 
 	<FIN>;
@@ -60,8 +65,12 @@ while ($fname = readdir(DIR)) {
 	}
 	$code =~ s/\n+$//msg;
 	print RULES <<END;
-SimpleLineLinter{LinterName{"$category", "$name", "$desc"},
-$code},
+SimpleLineLinter{
+\tLinterName{
+\t\t"$category",
+\t\t"$name",
+\t\t"$desc"},
+\t$code},
 END
 	close FIN;
 }
