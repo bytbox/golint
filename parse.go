@@ -53,7 +53,6 @@ func RunParsingLinters(filename string,
 		return true
 	}), file)
 	if !valid {
-		println("not valid!")
 		return
 	}
 
