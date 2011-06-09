@@ -13,6 +13,7 @@ golint: main.${O}
 
 MAINFILES = main.go \
             line.go \
+            parse.go \
             rules.go \
             util.go
             
@@ -20,7 +21,7 @@ MAINFILES = main.go \
 main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
 
-rules.go: genrules.pl rules/line-regex
+rules.go: genrules.pl $(wildcard rules/*/* rules/*)
 	perl genrules.pl
 
 clean:

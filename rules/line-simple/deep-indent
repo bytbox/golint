@@ -1,0 +1,15 @@
+style:deep-indent
+More than 5 levels of indentation
+func (line string) (bool, string) {
+	indent := 0
+	for _, c := range line {
+		if c == '\t' {
+			indent += 1
+		} else {
+			break
+		}
+	}
+	return indent > 5, ""
+}
+
+

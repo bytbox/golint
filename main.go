@@ -11,6 +11,12 @@ import (
 	"sync"
 )
 
+// TODO 'compatilbility' with gofix
+// TODO check for (potentially) overlapping imports
+// TODO pattern-matching in ParsingLinter
+// TODO use actual lints in checking for valid parse
+// TODO some sort of pragma to disable golint checking for a file or line
+
 var version = "0.1.0"
 
 var (
@@ -47,13 +53,16 @@ func main() {
 		fmt.Printf("\n")
 	}
 
+	go func() {
+		// Complain about any errors
+		for err := range errs {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+		}
+	}()
+
 	LintFiles(files, errs)
 	close(errs)
 
-	// Complain about any errors
-	for err := range errs {
-		fmt.Fprintf(os.Stderr, "%s", err)
-	}
 }
 
 func LintFiles(files []string, errs chan os.Error) {
@@ -64,6 +73,8 @@ func LintFiles(files []string, errs chan os.Error) {
 	lintDone := make(chan int)
 
 	var err os.Error
+
+	// start up the LineLinters
 	lineChan := make([]chan Line, len(LineLinters))
 	for i, ll := range LineLinters {
 		lineChan[i] = make(chan Line)
@@ -82,8 +93,9 @@ func LintFiles(files []string, errs chan os.Error) {
 		lintDone <- 1
 	}()
 
-	// line-lint all files
+	// lint all files
 	for _, fname := range files {
+		// line lint
 		var lines []string
 		if lines, err = ReadFileLines(fname); err != nil {
 			errs <- err
@@ -94,6 +106,13 @@ func LintFiles(files []string, errs chan os.Error) {
 				c <- Line{Location{fname, lineno+1}, line}
 			}
 		}
+
+		// parsing lint
+		go func() {
+			lintWG.Add(1)
+			RunParsingLinters(fname, lintRoot, errs)
+			lintWG.Done()
+		}()
 	}
 
 	for _, c := range lineChan { // close all lineChans

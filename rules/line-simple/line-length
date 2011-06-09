@@ -1,0 +1,15 @@
+style:line-length
+Line length should not exceed 80 characters
+func (line string) (bool, string) {
+	ll := 0
+	for _, c := range line {
+		if c == '\t' {
+			ll += 8
+		} else {
+			ll += 1
+		}
+	}
+	return ll > 80, ""
+}
+
+

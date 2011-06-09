@@ -1,3 +1,7 @@
+// Copyright 2011 The Golint Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -23,26 +27,33 @@ type LineLinter interface {
 // use this as a base (for readability and other reasons).
 type SimpleLineLinter struct {
 	LinterName
-	lintFunc func(string) bool
+	lintFunc func(string) (bool, string)
 }
 
 func (sl SimpleLineLinter) String() string {
 	return sl.LinterName.String()
 }
 
-func (sl SimpleLineLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
+func (sl SimpleLineLinter) RunLint(
+		text chan Line,
+		lints chan Lint,
+		wg *sync.WaitGroup) {
 	wg.Add(1)
 	for line := range text {
-		if sl.lintFunc(line.line) {
-			lints <- LineLint{sl, line.Location, ""}
+		if bad, issue := sl.lintFunc(line.line); bad {
+			lints <- LineLint{sl, line.Location, issue}
 		}
 	}
 	wg.Done()
 }
 
-// A line-based linter using regular expressions
+// A line-based linter using regular expressions.
+//
+// The linter returns one piece of lint for every line matching the regular
+// expression - multiple matches in a single line are ignored.
 type RegexLinter struct {
 	LinterName
+	// the regular expression to check for
 	Regex string
 }
 
@@ -50,7 +61,10 @@ func (rl RegexLinter) String() string {
 	return fmt.Sprintf("%s (%s)", rl.LinterName.String(), rl.Regex)
 }
 
-func (rl RegexLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
+func (rl RegexLinter) RunLint(
+		text chan Line,
+		lints chan Lint,
+		wg *sync.WaitGroup) {
 	wg.Add(1)
 	for line := range text {
 		if matches, _ := regexp.Match(rl.Regex, []byte(line.line)); matches {
@@ -67,6 +81,11 @@ type LineLint struct {
 }
 
 func (lint LineLint) String() string {
-	return fmt.Sprintf("%s at %s", lint.linter.String(), lint.Location)
+	if len(lint.issue) == 0 {
+		return fmt.Sprintf("%s at %s",
+			lint.linter.String(), lint.Location)
+	}
+	return fmt.Sprintf("%s at %s: %s",
+		lint.linter.String(), lint.Location, lint.issue)
 }
 
