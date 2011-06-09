@@ -34,7 +34,10 @@ func (sl SimpleLineLinter) String() string {
 	return sl.LinterName.String()
 }
 
-func (sl SimpleLineLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
+func (sl SimpleLineLinter) RunLint(
+		text chan Line,
+		lints chan Lint,
+		wg *sync.WaitGroup) {
 	wg.Add(1)
 	for line := range text {
 		if bad, issue := sl.lintFunc(line.line); bad {
@@ -58,7 +61,10 @@ func (rl RegexLinter) String() string {
 	return fmt.Sprintf("%s (%s)", rl.LinterName.String(), rl.Regex)
 }
 
-func (rl RegexLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
+func (rl RegexLinter) RunLint(
+		text chan Line,
+		lints chan Lint,
+		wg *sync.WaitGroup) {
 	wg.Add(1)
 	for line := range text {
 		if matches, _ := regexp.Match(rl.Regex, []byte(line.line)); matches {
@@ -76,8 +82,10 @@ type LineLint struct {
 
 func (lint LineLint) String() string {
 	if len(lint.issue) == 0 {
-		return fmt.Sprintf("%s at %s", lint.linter.String(), lint.Location)
+		return fmt.Sprintf("%s at %s",
+			lint.linter.String(), lint.Location)
 	}
-	return fmt.Sprintf("%s at %s: %s", lint.linter.String(), lint.Location, lint.issue)
+	return fmt.Sprintf("%s at %s: %s",
+		lint.linter.String(), lint.Location, lint.issue)
 }
 
