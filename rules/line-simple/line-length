@@ -1,6 +1,6 @@
 style:line-length
 Line length should not exceed 80 characters
-func (line string) bool {
+func (line string) (bool, string) {
 	ll := 0
 	for _, c := range line {
 		if c == '\t' {
@@ -9,7 +9,7 @@ func (line string) bool {
 			ll += 1
 		}
 	}
-	return ll > 80
+	return ll > 80, ""
 }
 
 

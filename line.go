@@ -23,7 +23,7 @@ type LineLinter interface {
 // use this as a base (for readability and other reasons).
 type SimpleLineLinter struct {
 	LinterName
-	lintFunc func(string) bool
+	lintFunc func(string) (bool, string)
 }
 
 func (sl SimpleLineLinter) String() string {
@@ -33,8 +33,8 @@ func (sl SimpleLineLinter) String() string {
 func (sl SimpleLineLinter) RunLint(text chan Line, lints chan Lint, wg *sync.WaitGroup) {
 	wg.Add(1)
 	for line := range text {
-		if sl.lintFunc(line.line) {
-			lints <- LineLint{sl, line.Location, ""}
+		if bad, issue := sl.lintFunc(line.line); bad {
+			lints <- LineLint{sl, line.Location, issue}
 		}
 	}
 	wg.Done()

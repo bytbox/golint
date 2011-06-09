@@ -1,6 +1,6 @@
 style:deep-indent
 More than 5 levels of indentation
-func (line string) bool {
+func (line string) (bool, string) {
 	indent := 0
 	for _, c := range line {
 		if c == '\t' {
@@ -9,7 +9,7 @@ func (line string) bool {
 			break
 		}
 	}
-	return indent > 5
+	return indent > 5, ""
 }
 
 
