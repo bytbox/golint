@@ -20,7 +20,7 @@ MAINFILES = main.go \
 main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
 
-rules.go: genrules.pl rules/line-regex
+rules.go: genrules.pl $(wildcard rules/*/* rules/*)
 	perl genrules.pl
 
 install: /usr/local/bin/golint
