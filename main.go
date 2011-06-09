@@ -104,7 +104,7 @@ func LintFiles(files []string, errs chan os.Error) {
 		// parsing lint
 		go func() {
 			lintWG.Add(1)
-			RunParsingLinters(fname, lintRoot, errs, lintWG)
+			RunParsingLinters(fname, lintRoot, errs)
 			lintWG.Done()
 		}()
 	}

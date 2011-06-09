@@ -31,17 +31,47 @@ func visitor(visit func(node ast.Node) bool) ast.Visitor {
 
 func RunParsingLinters(filename string,
 			lintRoot chan Lint,
-			errs chan os.Error,
-			lintWG *sync.WaitGroup) {
+			errs chan os.Error) {
+	lintWG := new(sync.WaitGroup)
+	lintWG.Add(1)
+
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		errs <- err
 	}
 
+	// validate the parse
+	valid := true
 	ast.Walk(visitor(func (node ast.Node) bool {
-		return false
+		switch t := node.(type) {
+		case *ast.BadDecl:
+		case *ast.BadExpr:
+		case *ast.BadStmt:
+			valid = false
+		}
+		return true
 	}), file)
+	if !valid {
+		println("not valid!")
+		return
+	}
+
+	for _, linter := range ParsingLinters {
+		lintWG.Add(1)
+		go func() {
+			nodeChan := make(chan ast.Node)
+			go linter.RunLint(nodeChan, lintRoot, lintWG)
+
+			ast.Walk(visitor(func (node ast.Node) bool {
+				return true
+			}), file)
+			lintWG.Done()
+		}()
+	}
+
+	lintWG.Done()
+	lintWG.Wait()
 }
 
 // Represents a parse-based linter.

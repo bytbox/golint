@@ -69,6 +69,12 @@ closedir DIR;
 
 print RULES <<END;
 }
+
+var ParsingLinters = [...]ParsingLinter{
+END
+
+print RULES <<END;
+}
 END
 
 close RULES;
