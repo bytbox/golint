@@ -107,12 +107,12 @@ func LintFiles(files []string, errs chan os.Error) {
 			}
 		}
 
+		lintWG.Add(1)
 		// parsing lint
-		go func() {
-			lintWG.Add(1)
+		go func(fname string) {
 			RunParsingLinters(fname, lintRoot, errs)
 			lintWG.Done()
-		}()
+		}(fname)
 	}
 
 	for _, c := range lineChan { // close all lineChans

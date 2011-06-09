@@ -5,6 +5,7 @@
 package main
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -61,7 +62,7 @@ func RunParsingLinters(filename string,
 		lintWG.Add(1)
 		go func() {
 			nodeChan := make(chan ast.Node)
-			go linter.RunLint(nodeChan, lintRoot, lintWG)
+			go linter.RunLint(filename, nodeChan, lintRoot, lintWG)
 
 			ast.Walk(visitor(func (node ast.Node) bool {
 				nodeChan <- node
@@ -82,20 +83,22 @@ func RunParsingLinters(filename string,
 // valid, with no BadX nodes).
 type ParsingLinter interface {
 	String() string
-	RunLint(chan ast.Node, chan Lint, *sync.WaitGroup)
+	RunLint(string, chan ast.Node, chan Lint, *sync.WaitGroup)
 }
 
 type OverlappingImportsLinter struct {
 }
 
 func (oil OverlappingImportsLinter) String() string {
-	return "hi"
+	return fmt.Sprintf("misc:overlapping-imports: Imports of distinct packages should have distinct local names")
 }
 
 func (oil OverlappingImportsLinter) RunLint(
+		filename string,
 		nodes chan ast.Node,
 		lints chan Lint,
 		wg *sync.WaitGroup) {
+	wg.Add(1)
 	imports := make(map[string]string)
 	for node := range nodes {
 		switch node.(type) {
@@ -118,8 +121,25 @@ func (oil OverlappingImportsLinter) RunLint(
 
 	for localName, count := range localNameCount {
 		if count > 1 {
-			println("Yikes!", localName)
+			lints <- OverlappingImportsLint{oil,
+				filename, localName, count}
 		}
 	}
+	wg.Done()
+}
+
+type OverlappingImportsLint struct {
+	linter Linter
+	filename string
+	localName string
+	count int
+}
+
+func (oil OverlappingImportsLint) String() string {
+	return fmt.Sprintf("%s in %s: '%s' used %d times",
+		oil.linter.String(),
+		oil.filename,
+		oil.localName,
+		oil.count)
 }
 
