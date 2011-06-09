@@ -17,15 +17,22 @@ sub getNameparts {
 
 open RULES, ">rules.go";
 
+open FIN, "rules/header.go";
+while ($line = <FIN>) {
+	print RULES $line;
+}
+close FIN;
+
 print RULES <<END;
-package main
-
-import (
-	"regexp"
-)
-
 var LineLinters = [...]LineLinter{
 END
+
+open FIN, "rules/line-raw.go";
+while ($line = <FIN>) {
+	chomp $line;
+	print RULES "$line,\n" if length($line)>0;
+}
+close FIN;
 
 open FIN, "rules/line-regex";
 while (<FIN>) {
@@ -81,6 +88,13 @@ print RULES <<END;
 
 var ParsingLinters = [...]ParsingLinter{
 END
+
+open FIN, "rules/parsing-raw.go";
+while ($line = <FIN>) {
+	chomp $line;
+	print RULES "$line,\n" if length($line)>0;
+}
+close FIN;
 
 print RULES <<END;
 }
