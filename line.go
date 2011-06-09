@@ -67,7 +67,8 @@ func (rl RegexLinter) RunLint(
 		wg *sync.WaitGroup) {
 	wg.Add(1)
 	for line := range text {
-		if matches, _ := regexp.Match(rl.Regex, []byte(line.line)); matches {
+		if matches, _ := regexp.Match(rl.Regex, []byte(line.line))
+				matches {
 			lints <- LineLint{rl, line.Location, ""}
 		}
 	}
