@@ -67,6 +67,8 @@ func LintFiles(files []string, errs chan os.Error) {
 	lintDone := make(chan int)
 
 	var err os.Error
+
+	// start up the LineLinters
 	lineChan := make([]chan Line, len(LineLinters))
 	for i, ll := range LineLinters {
 		lineChan[i] = make(chan Line)
@@ -100,7 +102,11 @@ func LintFiles(files []string, errs chan os.Error) {
 		}
 
 		// parsing lint
-		
+		go func() {
+			lintWG.Add(1)
+			RunParsingLinters(fname, lintRoot, errs, lintWG)
+			lintWG.Done()
+		}()
 	}
 
 	for _, c := range lineChan { // close all lineChans
