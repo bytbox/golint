@@ -82,3 +82,14 @@ type ParsingLinter interface {
 	RunLint(chan ast.Node, chan Lint, *sync.WaitGroup)
 }
 
+type OverlappingImportsLinter struct {
+}
+
+func (oil OverlappingImportsLinter) String() string {
+	return "hi"
+}
+
+func (oil OverlappingImportsLinter) RunLint(chan ast.Node, chan Lint, *sync.WaitGroup) {
+
+}
+
