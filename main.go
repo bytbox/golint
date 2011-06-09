@@ -47,13 +47,16 @@ func main() {
 		fmt.Printf("\n")
 	}
 
+	go func() {
+		// Complain about any errors
+		for err := range errs {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+		}
+	}()
+
 	LintFiles(files, errs)
 	close(errs)
 
-	// Complain about any errors
-	for err := range errs {
-		fmt.Fprintf(os.Stderr, "%s", err)
-	}
 }
 
 func LintFiles(files []string, errs chan os.Error) {
@@ -82,8 +85,9 @@ func LintFiles(files []string, errs chan os.Error) {
 		lintDone <- 1
 	}()
 
-	// line-lint all files
+	// lint all files
 	for _, fname := range files {
+		// line lint
 		var lines []string
 		if lines, err = ReadFileLines(fname); err != nil {
 			errs <- err
@@ -94,6 +98,9 @@ func LintFiles(files []string, errs chan os.Error) {
 				c <- Line{Location{fname, lineno+1}, line}
 			}
 		}
+
+		// parsing lint
+		
 	}
 
 	for _, c := range lineChan { // close all lineChans
