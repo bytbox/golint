@@ -23,11 +23,6 @@ main.${O}: ${MAINFILES}
 rules.go: genrules.pl rules/line-regex
 	perl genrules.pl
 
-install: /usr/local/bin/golint
-
-/usr/local/bin/golint: golint
-	cp $? $@
-
 clean:
 	rm -f golint *.${O} rules.go
 
