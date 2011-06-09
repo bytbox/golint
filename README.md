@@ -8,7 +8,7 @@ Gofmt Compatibility
 Golint is not compatible with the current version of gofmt (the main go code
 formatting program), in the sense that running gofmt on code that passes
 golint may produce code that does not pass golint. This is the product of a
-combination of bugs in both gofmt and the go compiler, and should be fixed
+combination of bugs in golint, gofmt, the go compiler, and should be fixed
 soon.
 
 In the long term, golint hopes to be compatible with gofmt in the sense above,
