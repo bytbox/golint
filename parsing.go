@@ -120,6 +120,9 @@ func (oil OverlappingImportsLinter) RunLint(
 	}
 
 	for localName, count := range localNameCount {
+		if localName == "." {
+			count += 1
+		}
 		if count > 1 {
 			lints <- OverlappingImportsLint{oil,
 				filename, localName, count}
