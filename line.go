@@ -67,6 +67,9 @@ type LineLint struct {
 }
 
 func (lint LineLint) String() string {
-	return fmt.Sprintf("%s at %s", lint.linter.String(), lint.Location)
+	if len(lint.issue) == 0 {
+		return fmt.Sprintf("%s at %s", lint.linter.String(), lint.Location)
+	}
+	return fmt.Sprintf("%s at %s: %s", lint.linter.String(), lint.Location, lint.issue)
 }
 

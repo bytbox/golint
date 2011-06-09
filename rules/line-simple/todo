@@ -1,0 +1,12 @@
+misc:todo
+TODO notice
+func (line string) (bool, string) {
+	r := regexp.MustCompile("(//+|/\\*) *((TODO|FIXME|XXX)( (.*))?)$")
+	ms := r.FindStringSubmatch(line)
+	if ms != nil {
+		return true, ms[2]
+	}
+	return false, ""
+}
+
+

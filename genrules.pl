@@ -16,6 +16,10 @@ open RULES, ">rules.go";
 print RULES <<END;
 package main
 
+import (
+	"regexp"
+)
+
 var LineLinters = [...]LineLinter{
 END
 
