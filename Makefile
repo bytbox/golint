@@ -13,7 +13,7 @@ golint: main.${O}
 
 MAINFILES = main.go \
             line.go \
-            parse.go \
+            parsing.go \
             rules.go \
             util.go
             
