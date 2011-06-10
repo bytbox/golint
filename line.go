@@ -18,7 +18,7 @@ import (
 // reset at the beginning of every file, so a LineLinter would have no way to
 // tell where one file begins and another ends.
 type LineLinter interface {
-	String() string
+	Linter
 	RunLint(chan Line, chan Lint, *sync.WaitGroup)
 }
 

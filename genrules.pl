@@ -24,7 +24,7 @@ while ($line = <FIN>) {
 close FIN;
 
 print RULES <<END;
-var LineLinters = [...]LineLinter{
+var LineLinters = []LineLinter{
 END
 
 open FIN, "rules/line-raw";

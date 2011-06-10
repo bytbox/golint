@@ -82,7 +82,7 @@ func RunParsingLinters(filename string,
 // The linter is given a stream of nodes in an AST (which is guaranteed to be
 // valid, with no BadX nodes).
 type ParsingLinter interface {
-	String() string
+	Linter
 	RunLint(string, chan ast.Node, chan Lint, *sync.WaitGroup)
 }
 
