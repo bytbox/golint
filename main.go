@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"sync"
 )
 
@@ -98,6 +99,10 @@ func LintFiles(files []string, errs chan os.Error) {
 		var lines []string
 		if lines, err = ReadFileLines(fname); err != nil {
 			errs <- err
+			continue
+		}
+		if matched, _ := regexp.MatchString("^(//|/\\*) *{ *NOLINT *}", lines[0]); matched {
+			// nolint pragma
 			continue
 		}
 		for _, c := range lineChan {
