@@ -97,7 +97,7 @@ func (oil OverlappingImportsLinter) Desc() LinterDesc {
 }
 
 func (oil OverlappingImportsLinter) String() string {
-	return oil.String()
+	return oil.Desc().String()
 }
 
 func (oil OverlappingImportsLinter) RunLint(
