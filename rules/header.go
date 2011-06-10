@@ -1,3 +1,5 @@
+// {NOLINT}
+
 package main
 
 import (
