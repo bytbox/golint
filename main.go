@@ -21,6 +21,7 @@ import (
 var version = "0.1.2"
 
 var (
+	listLinters = flag.Bool("list", false, "list linters")
 	verbose     = flag.Bool("v", false, "verbose output")
 	showversion = flag.Bool("version", false, "show version information")
 )
@@ -33,6 +34,10 @@ func main() {
 
 	if *showversion {
 		fmt.Printf("golint %s\n", version)
+		return
+	}
+
+	if *listLinters {
 		return
 	}
 
@@ -135,16 +140,17 @@ func LintFiles(files []string, errs chan os.Error) {
 
 type Linter interface {
 	String() string
+	Desc() LinterDesc
 }
 
 // Name and description of a linter.
-type LinterName struct {
+type LinterDesc struct {
 	Category    string
 	Name        string
 	Description string
 }
 
-func (ln LinterName) String() string {
+func (ln LinterDesc) String() string {
 	return fmt.Sprintf("%s:%s: %s", ln.Category, ln.Name, ln.Description)
 }
 

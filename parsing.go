@@ -89,10 +89,15 @@ type ParsingLinter interface {
 type OverlappingImportsLinter struct {
 }
 
+func (oil OverlappingImportsLinter) Desc() LinterDesc {
+	return LinterDesc{
+		"misc",
+		"overlapping-imports",
+		"Imports of distinct packages should have distinct local names"}
+}
+
 func (oil OverlappingImportsLinter) String() string {
-	return fmt.Sprintf("%s: %s",
-		"misc:overlapping-imports",
-		"Imports of distinct packages should have distinct local names")
+	return oil.String()
 }
 
 func (oil OverlappingImportsLinter) RunLint(

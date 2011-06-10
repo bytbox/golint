@@ -27,7 +27,7 @@ print RULES <<END;
 var LineLinters = [...]LineLinter{
 END
 
-open FIN, "rules/line-raw.go";
+open FIN, "rules/line-raw";
 while ($line = <FIN>) {
 	chomp $line;
 	print RULES "$line,\n" if length($line)>0;
@@ -46,7 +46,7 @@ while (<FIN>) {
 	($category, $name, $name2) = getNameparts $name;
 	print RULES <<END;
 RegexLinter{
-\tLinterName{
+\tLinterDesc{
 \t\t"$category",
 \t\t"$name",
 \t\t"$desc"},
@@ -73,7 +73,7 @@ while ($fname = readdir(DIR)) {
 	$code =~ s/\n+$//msg;
 	print RULES <<END;
 SimpleLineLinter{
-\tLinterName{
+\tLinterDesc{
 \t\t"$category",
 \t\t"$name",
 \t\t"$desc"},
@@ -89,7 +89,7 @@ print RULES <<END;
 var ParsingLinters = [...]ParsingLinter{
 END
 
-open FIN, "rules/parsing-raw.go";
+open FIN, "rules/parsing-raw";
 while ($line = <FIN>) {
 	chomp $line;
 	print RULES "$line,\n" if length($line)>0;

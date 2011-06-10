@@ -26,12 +26,12 @@ type LineLinter interface {
 // equivalent to a specialization of this, although it may be desirable not to
 // use this as a base (for readability and other reasons).
 type SimpleLineLinter struct {
-	LinterName
+	LinterDesc
 	lintFunc func(string) (bool, string)
 }
 
-func (sl SimpleLineLinter) String() string {
-	return sl.LinterName.String()
+func (sl SimpleLineLinter) Desc() LinterDesc {
+	return sl.LinterDesc
 }
 
 func (sl SimpleLineLinter) RunLint(
@@ -52,13 +52,17 @@ func (sl SimpleLineLinter) RunLint(
 // The linter returns one piece of lint for every line matching the regular
 // expression - multiple matches in a single line are ignored.
 type RegexLinter struct {
-	LinterName
+	LinterDesc
 	// the regular expression to check for
 	Regex string
 }
 
+func (rl RegexLinter) Desc() LinterDesc {
+	return rl.LinterDesc
+}
+
 func (rl RegexLinter) String() string {
-	return fmt.Sprintf("%s (%s)", rl.LinterName.String(), rl.Regex)
+	return fmt.Sprintf("%s (%s)", rl.LinterDesc.String(), rl.Regex)
 }
 
 func (rl RegexLinter) RunLint(
