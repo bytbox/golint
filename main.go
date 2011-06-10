@@ -38,32 +38,7 @@ func main() {
 	}
 
 	if *listLinters {
-		linters := make(map[string](map[string]string))
-		fmt.Printf("%d total linters:\n",
-			len(LineLinters) + len(ParsingLinters))
-		for _, linter := range LineLinters {
-			if _, ok := linters[linter.Desc().Category]; !ok {
-				linters[linter.Desc().Category] =
-					make(map[string]string)
-			}
-			linters[linter.Desc().Category][linter.Desc().Name] =
-				linter.Desc().Description
-		}
-		for _, linter := range ParsingLinters {
-			if _, ok := linters[linter.Desc().Category]; !ok {
-				linters[linter.Desc().Category] =
-					make(map[string]string)
-			}
-			linters[linter.Desc().Category][linter.Desc().Name] =
-				linter.Desc().Description
-		}
-		for category, ls := range linters {
-			fmt.Printf("%s\t", category)
-			for name, _ := range ls {
-				fmt.Printf("%s ", name)
-			}
-			fmt.Printf("\n")
-		}
+		printLinterList()
 		return
 	}
 
@@ -95,6 +70,35 @@ func main() {
 	LintFiles(files, errs)
 	close(errs)
 
+}
+
+func printLinterList() {
+	linters := make(map[string](map[string]string))
+	fmt.Printf("%d total linters:\n",
+		len(LineLinters) + len(ParsingLinters))
+	for _, linter := range LineLinters {
+		if _, ok := linters[linter.Desc().Category]; !ok {
+			linters[linter.Desc().Category] =
+				make(map[string]string)
+		}
+		linters[linter.Desc().Category][linter.Desc().Name] =
+			linter.Desc().Description
+	}
+	for _, linter := range ParsingLinters {
+		if _, ok := linters[linter.Desc().Category]; !ok {
+			linters[linter.Desc().Category] =
+				make(map[string]string)
+		}
+		linters[linter.Desc().Category][linter.Desc().Name] =
+			linter.Desc().Description
+	}
+	for category, ls := range linters {
+		fmt.Printf("%s\t", category)
+		for name, _ := range ls {
+			fmt.Printf("%s ", name)
+		}
+		fmt.Printf("\n")
+	}
 }
 
 func LintFiles(files []string, errs chan os.Error) {
