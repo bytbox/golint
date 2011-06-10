@@ -17,6 +17,7 @@ import (
 // TODO use actual lints in checking for valid parse
 // TODO don't print large numbers of repeated lints for a single file
 // TODO order the lints appropriately
+// TODO separate out a go/lint package
 
 var version = "0.1.3"
 
