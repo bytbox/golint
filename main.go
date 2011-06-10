@@ -18,7 +18,7 @@ import (
 // TODO don't print large numbers of repeated lints for a single file
 // TODO order the lints appropriately
 
-var version = "0.1.2"
+var version = "0.1.3"
 
 var (
 	listLinters = flag.Bool("list", false, "list linters")
