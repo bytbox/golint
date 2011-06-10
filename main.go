@@ -15,7 +15,6 @@ import (
 // TODO 'compatilbility' with gofix
 // TODO pattern-matching in ParsingLinter
 // TODO use actual lints in checking for valid parse
-// TODO some sort of pragma to disable golint checking for a file or line
 
 var version = "0.1.2"
 
