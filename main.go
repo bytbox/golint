@@ -102,7 +102,8 @@ func LintFiles(files []string, errs chan os.Error) {
 			errs <- err
 			continue
 		}
-		if matched, _ := regexp.MatchString("^(//|/\\*) *{ *NOLINT *}", lines[0]); matched {
+		if m, _ := regexp.MatchString("^(//|/\\*) *{ *NOLINT *}",
+				lines[0]); m {
 			// nolint pragma
 			continue
 		}
