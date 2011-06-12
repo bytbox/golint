@@ -60,7 +60,7 @@ func RunParsingLinters(filename string,
 
 	for _, linter := range ParsingLinters {
 		lintWG.Add(1)
-		go func() {
+		go func(linter ParsingLinter) {
 			nodeChan := make(chan ast.Node)
 			go linter.RunLint(fset, nodeChan, lintRoot, lintWG)
 
@@ -70,7 +70,7 @@ func RunParsingLinters(filename string,
 			}), file)
 			close(nodeChan)
 			lintWG.Done()
-		}()
+		}(linter)
 	}
 
 	lintWG.Done()
