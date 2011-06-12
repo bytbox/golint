@@ -47,6 +47,7 @@ while (<FIN>) {
 	$desc =~ s/^\t//;
 	($category, $name, $name2) = getNameparts $name;
 	print RULES <<END;
+// $category:$name - $desc ($regex)
 RegexLinter{
 \tLinterDesc{
 \t\t"$category",
@@ -54,7 +55,6 @@ RegexLinter{
 \t\t"$desc"},
 \t`$regex`},
 END
-
 	<FIN>;
 }
 close FIN;
@@ -74,6 +74,7 @@ while ($fname = readdir(DIR)) {
 	}
 	$code =~ s/\n+$//msg;
 	print RULES <<END;
+// $category:$name - $desc
 SimpleLineLinter{
 \tLinterDesc{
 \t\t"$category",
