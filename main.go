@@ -19,7 +19,7 @@ import (
 // TODO order the lints appropriately
 // TODO separate out a go/lint package
 
-var version = "0.1.3"
+var version = "0.1.4"
 
 var (
 	listLinters = flag.Bool("list", false, "list linters")
