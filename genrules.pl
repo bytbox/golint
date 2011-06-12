@@ -108,6 +108,9 @@ while ($line = <FIN>) {
 	$var = shift @fields;
 	$desc = shift @fields;
 	$rest = join '\t', @fields;
+	if ($rest =~ /gofix:([a-zA-Z0-9]+)/) {
+		$gofix = $1
+	}
 	print RULES <<END;
 VariableDeprecationLinter{
 \t// $line
@@ -116,7 +119,9 @@ VariableDeprecationLinter{
 \t\t"$name",
 \t\t"$desc"},
 \t"$package",
-\t"$var"},
+\t"$var",
+\tDeprecationNotes{
+\t\t"$gofix"}},
 END
 }
 close FIN;

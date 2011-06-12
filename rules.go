@@ -95,5 +95,7 @@ VariableDeprecationLinter{
 		"osopen",
 		"O_CREAT has been renamed to O_CREATE"},
 	"os",
-	"O_CREAT"},
+	"O_CREAT",
+	DeprecationNotes{
+		"osopen"}},
 }

@@ -5,15 +5,28 @@
 package main
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"sync"
 )
 
+type DeprecationNotes struct {
+	gofix string
+}
+
+func (dn DeprecationNotes) String() string {
+	if len(dn.gofix)>0 {
+		return fmt.Sprintf("fix with `gofix %s`", dn.gofix)
+	}
+	return ""
+}
+
 type VariableDeprecationLinter struct {
 	LinterDesc
 	packageName string
 	varName     string
+	extra       DeprecationNotes
 }
 
 func (vdl VariableDeprecationLinter) RunLint(
@@ -27,7 +40,8 @@ func (vdl VariableDeprecationLinter) RunLint(
 		varName := n.Sel.String()
 		if packageName == vdl.packageName &&
 			varName == vdl.varName {
-			lints <- ParsingLint{vdl, fset.Position(n.Pos())}
+			lints <- ParsingLint{vdl,
+				fset.Position(n.Pos()), vdl.extra.String()}
 		}
 	})
 	wg.Done()

@@ -89,9 +89,13 @@ type ParsingLinter interface {
 type ParsingLint struct {
 	linter ParsingLinter
 	pos    token.Position
+	extra  string
 }
 
 func (pl ParsingLint) String() string {
+	if len(pl.extra)>1 {
+		return fmt.Sprintf("%s at %s: %s", pl.linter, pl.pos, pl.extra)
+	}
 	return fmt.Sprintf("%s at %s", pl.linter.String(), pl.pos.String())
 }
 
