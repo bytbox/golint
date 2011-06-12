@@ -88,4 +88,12 @@ SimpleLineLinter{
 
 var ParsingLinters = [...]ParsingLinter{
 OverlappingImportsLinter{},
+VariableDeprecationLinter{
+	// osopen	os	O_CREAT		O_CREAT has been renamed to O_CREATE	gofix:osopen
+	LinterDesc{
+		"deprecation",
+		"osopen",
+		"O_CREAT has been renamed to O_CREATE"},
+	"os",
+	"O_CREAT"},
 }

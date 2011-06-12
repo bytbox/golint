@@ -98,6 +98,29 @@ while ($line = <FIN>) {
 }
 close FIN;
 
+open FIN, "rules/deprecation/variables";
+while ($line = <FIN>) {
+	chomp $line;
+	next if length($line) < 2;
+	@fields = split /\t+/, $line;
+	$name = shift @fields;
+	$package = shift @fields;
+	$var = shift @fields;
+	$desc = shift @fields;
+	$rest = join '\t', @fields;
+	print RULES <<END;
+VariableDeprecationLinter{
+\t// $line
+\tLinterDesc{
+\t\t"deprecation",
+\t\t"$name",
+\t\t"$desc"},
+\t"$package",
+\t"$var"},
+END
+}
+close FIN;
+
 print RULES <<END;
 }
 END

@@ -62,7 +62,7 @@ func RunParsingLinters(filename string,
 		lintWG.Add(1)
 		go func() {
 			nodeChan := make(chan ast.Node)
-			go linter.RunLint(filename, nodeChan, lintRoot, lintWG)
+			go linter.RunLint(fset, nodeChan, lintRoot, lintWG)
 
 			ast.Walk(visitor(func (node ast.Node) bool {
 				nodeChan <- node
@@ -83,7 +83,16 @@ func RunParsingLinters(filename string,
 // valid, with no BadX nodes).
 type ParsingLinter interface {
 	Linter
-	RunLint(string, chan ast.Node, chan Lint, *sync.WaitGroup)
+	RunLint(*token.FileSet, chan ast.Node, chan Lint, *sync.WaitGroup)
+}
+
+type ParsingLint struct {
+	linter ParsingLinter
+	pos    token.Position
+}
+
+func (pl ParsingLint) String() string {
+	return fmt.Sprintf("%s at %s", pl.linter.String(), pl.pos.String())
 }
 
 type OverlappingImportsLinter struct {
@@ -101,16 +110,19 @@ func (oil OverlappingImportsLinter) String() string {
 }
 
 func (oil OverlappingImportsLinter) RunLint(
-		filename string,
+		fset *token.FileSet,
 		nodes chan ast.Node,
 		lints chan Lint,
 		wg *sync.WaitGroup) {
 	wg.Add(1)
 	imports := make(map[string]string)
+	filename := ""
 	for node := range nodes {
-		switch node.(type) {
+		switch is := node.(type) {
 		case (*ast.ImportSpec):
-			is := node.(*ast.ImportSpec)
+			if filename == "" {
+				filename = fset.File(is.Pos()).Name()
+			}
 			if is.Name != nil {
 				imports[is.Path.Value] = is.Name.String()
 			} else {

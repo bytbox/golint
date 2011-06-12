@@ -185,6 +185,10 @@ func (ln LinterDesc) String() string {
 	return fmt.Sprintf("%s:%s: %s", ln.Category, ln.Name, ln.Description)
 }
 
+func (ld LinterDesc) Desc() LinterDesc {
+	return ld
+}
+
 // Represents a line of code. Describes both the location of the code and the
 // code itself.
 type Line struct {
