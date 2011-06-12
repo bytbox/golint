@@ -65,6 +65,37 @@ type FunctionDeprecationLinter struct {
 	funcName    string
 }
 
+func (fdl FunctionDeprecationLinter) RunLint(
+		fst *token.FileSet,
+		ns chan ast.Node,
+		lints chan Lint,
+		wg *sync.WaitGroup) {
+	wg.Add(1)
+	getFuncCalls(ns, func(pkg *ast.Ident, f *ast.Ident, args []ast.Expr) {
+
+	})
+	wg.Done()
+}
+
+func getFuncCalls(nodes chan ast.Node,
+		f func(*ast.Ident, *ast.Ident, []ast.Expr)) {
+	for node := range nodes {
+		n, ok := node.(*ast.CallExpr)
+		if !ok {
+			continue
+		}
+		sel, ok := n.Fun.(*ast.SelectorExpr)
+		if !ok {
+			continue
+		}
+		pkg, ok := sel.X.(*ast.Ident)
+		if !ok {
+			continue
+		}
+		f(pkg, sel.Sel, n.Args)
+	}
+}
+
 type MethodDeprecationLinter struct {
 	LinterDesc
 	packageName string
