@@ -14,6 +14,7 @@ golint: main.${O}
 MAINFILES = main.go \
             line.go \
             parsing.go \
+            deprecation.go \
             rules.go \
             util.go
             
