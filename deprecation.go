@@ -63,16 +63,22 @@ type FunctionDeprecationLinter struct {
 	LinterDesc
 	packageName string
 	funcName    string
+	extra       DeprecationNotes
 }
 
 func (fdl FunctionDeprecationLinter) RunLint(
-		fst *token.FileSet,
+		fset *token.FileSet,
 		ns chan ast.Node,
 		lints chan Lint,
 		wg *sync.WaitGroup) {
 	wg.Add(1)
 	getFuncCalls(ns, func(pkg *ast.Ident, f *ast.Ident, args []ast.Expr) {
-
+		// TODO actually look up the package
+		if pkg.String() == fdl.packageName &&
+			f.String() == fdl.funcName {
+			lints <- ParsingLint{fdl,
+				fset.Position(pkg.Pos()), fdl.extra.String()}
+		}
 	})
 	wg.Done()
 }
