@@ -63,6 +63,7 @@ type FunctionDeprecationLinter struct {
 	LinterDesc
 	packageName string
 	funcName    string
+	args        []string
 	extra       DeprecationNotes
 }
 

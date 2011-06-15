@@ -114,6 +114,11 @@ FunctionDeprecationLinter{
 		"incorrect os.Open API used"},
 	"os",
 	"Open",
+	[]string{
+		".",
+		".",
+		".",
+	},
 	DeprecationNotes{
 		"osopen"}},
 }

@@ -147,6 +147,7 @@ while ($line = <FIN>) {
 	if ($rest =~ /gofix:([a-zA-Z0-9]+)/) {
 		$gofix = $1
 	}
+	@args = split /,/,$argString;
 	print RULES <<END;
 FunctionDeprecationLinter{
 \t// $line
@@ -156,6 +157,13 @@ FunctionDeprecationLinter{
 \t\t"$desc"},
 \t"$package",
 \t"$func",
+\t[]string{
+END
+	for $arg (@args) {
+		print RULES "\t\t\"$arg\",\n";
+	}
+	print RULES <<END;
+\t},
 \tDeprecationNotes{
 \t\t"$gofix"}},
 END
