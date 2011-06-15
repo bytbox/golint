@@ -60,7 +60,14 @@ END
 close FIN;
 
 opendir DIR, "rules/line-simple" or die "Could not read rules/line-simple: $!";
+@fnames = ();
 while ($fname = readdir(DIR)) {
+	push @fnames, $fname;
+}
+sort @fnames;
+closedir DIR;
+
+for $fname (@fnames) {
 	next if $fname =~ /^\./;
 	open FIN, "rules/line-simple/$fname" or die "Could not open $fname: $!";
 	$name = <FIN>;
@@ -84,7 +91,6 @@ SimpleLineLinter{
 END
 	close FIN;
 }
-closedir DIR;
 
 print RULES <<END;
 }
