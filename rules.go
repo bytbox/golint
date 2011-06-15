@@ -106,4 +106,14 @@ VariableDeprecationLinter{
 	"O_CREAT",
 	DeprecationNotes{
 		"osopen"}},
+FunctionDeprecationLinter{
+	// osopen		os	Open	.,.,.	incorrect os.Open API used	gofix:osopen
+	LinterDesc{
+		"deprecation",
+		"osopen",
+		"incorrect os.Open API used"},
+	"os",
+	"Open",
+	DeprecationNotes{
+		"osopen"}},
 }

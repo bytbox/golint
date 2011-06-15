@@ -133,6 +133,35 @@ END
 }
 close FIN;
 
+open FIN, "rules/deprecation/functions";
+while ($line = <FIN>) {
+	chomp $line;
+	next if length($line) < 2;
+	@fields = split /\t+/, $line;
+	$name = shift @fields;
+	$package = shift @fields;
+	$func = shift @fields;
+	$argString = shift @fields;
+	$desc = shift @fields;
+	$rest = join '\t', @fields;
+	if ($rest =~ /gofix:([a-zA-Z0-9]+)/) {
+		$gofix = $1
+	}
+	print RULES <<END;
+FunctionDeprecationLinter{
+\t// $line
+\tLinterDesc{
+\t\t"deprecation",
+\t\t"$name",
+\t\t"$desc"},
+\t"$package",
+\t"$func",
+\tDeprecationNotes{
+\t\t"$gofix"}},
+END
+}
+close FIN;
+
 print RULES <<END;
 }
 END
