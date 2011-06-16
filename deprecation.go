@@ -77,11 +77,20 @@ func (fdl FunctionDeprecationLinter) RunLint(
 		// TODO actually look up the package
 		if pkg.String() == fdl.packageName &&
 			f.String() == fdl.funcName {
-			lints <- ParsingLint{fdl,
-				fset.Position(pkg.Pos()), fdl.extra.String()}
+			// check that the arg list matches the specified format
+			if argsMatch(fdl.args, args) {
+				lints <- ParsingLint{fdl,
+					fset.Position(pkg.Pos()),
+					fdl.extra.String()}
+			}
 		}
 	})
 	wg.Done()
+}
+
+func argsMatch(argFormat []string, args []ast.Expr) bool {
+	// TODO actually check the types of the arguments
+	return len(argFormat) == len(args)
 }
 
 func getFuncCalls(nodes chan ast.Node,
