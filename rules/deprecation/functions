@@ -1,1 +1,2 @@
-osopen		os	Open	.,.,.	incorrect os.Open API used	gofix:osopen
+osopen		os		Open	.,.,.	incorrect os.Open API used	gofix:osopen
+httpfinalurl	http/client	Get	.,.,.	incorrect client.Get API used	gofix:httpfinalurl

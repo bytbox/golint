@@ -12,7 +12,6 @@ import (
 	"sync"
 )
 
-// TODO linter to check for `gofix httpfinalurl`
 // TODO linter to check for `gofix httpserver`
 // TODO linter to check for `gofix netdial`
 // TODO linter to check for `gofix netlookup`
