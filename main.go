@@ -12,6 +12,13 @@ import (
 	"sync"
 )
 
+// TODO linter to check for `gofix httpfinalurl`
+// TODO linter to check for `gofix httpserver`
+// TODO linter to check for `gofix netdial`
+// TODO linter to check for `gofix netlookup`
+// TODO linter to check for `gofix procattr`
+// TODO linter to check for `gofix reflect`
+// TODO linter to check for `gofix tlsdial`
 // TODO use actual lints in checking for valid parse
 // TODO don't print large numbers of repeated lints for a single file
 // TODO order the lints appropriately
