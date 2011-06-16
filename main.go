@@ -14,8 +14,6 @@ import (
 )
 
 // TODO linter to check for `gofix httpserver`
-// TODO linter to check for `gofix netdial`
-// TODO linter to check for `gofix netlookup`
 // TODO linter to check for `gofix procattr`
 // TODO linter to check for `gofix reflect`
 // TODO linter to check for `gofix tlsdial`
