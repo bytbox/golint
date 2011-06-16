@@ -108,5 +108,7 @@ type MethodDeprecationLinter struct {
 	packageName string
 	typeName    string
 	methodName  string
+	args        []string
+	extra       DeprecationNotes
 }
 
