@@ -64,7 +64,7 @@ opendir DIR, "rules/line-simple" or die "Could not read rules/line-simple: $!";
 while ($fname = readdir(DIR)) {
 	push @fnames, $fname;
 }
-sort @fnames;
+@fnames = sort @fnames;
 closedir DIR;
 
 for $fname (@fnames) {

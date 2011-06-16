@@ -61,20 +61,6 @@ SimpleLineLinter{
 	}
 	return indent > 5, ""
 }},
-// misc:todo - TODO notice
-SimpleLineLinter{
-	LinterDesc{
-		"misc",
-		"todo",
-		"TODO notice"},
-	func (line string) (bool, string) {
-	r := regexp.MustCompile("(//+|/\\*) *((TODO|FIXME|XXX)( (.*))?)$")
-	ms := r.FindStringSubmatch(line)
-	if ms != nil {
-		return true, ms[2]
-	}
-	return false, ""
-}},
 // style:line-length - Line length should not exceed 80 characters
 SimpleLineLinter{
 	LinterDesc{
@@ -91,6 +77,20 @@ SimpleLineLinter{
 		}
 	}
 	return ll > 80, ""
+}},
+// misc:todo - TODO notice
+SimpleLineLinter{
+	LinterDesc{
+		"misc",
+		"todo",
+		"TODO notice"},
+	func (line string) (bool, string) {
+	r := regexp.MustCompile("(//+|/\\*) *((TODO|FIXME|XXX)( (.*))?)$")
+	ms := r.FindStringSubmatch(line)
+	if ms != nil {
+		return true, ms[2]
+	}
+	return false, ""
 }},
 }
 
