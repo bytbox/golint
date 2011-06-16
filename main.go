@@ -10,6 +10,7 @@ import (
 	"os"
 	"regexp"
 	"sync"
+	"tabwriter"
 )
 
 // TODO linter to check for `gofix httpserver`
@@ -78,8 +79,9 @@ func main() {
 }
 
 func printLinterList() {
+	w := tabwriter.NewWriter(os.Stdout, 3, 8, 2, ' ', 0)
 	linters := make(map[string](map[string]string))
-	fmt.Printf("%d total linters:\n",
+	fmt.Fprintf(w,"%d total linters:\n",
 		len(LineLinters) + len(ParsingLinters))
 	for _, linter := range LineLinters {
 		if _, ok := linters[linter.Desc().Category]; !ok {
@@ -98,12 +100,13 @@ func printLinterList() {
 			linter.Desc().Description
 	}
 	for category, ls := range linters {
-		fmt.Printf("%s\t", category)
+		fmt.Fprintf(w,"%s\t", category)
 		for name, _ := range ls {
-			fmt.Printf("%s ", name)
+			fmt.Fprintf(w,"%s ", name)
 		}
-		fmt.Printf("\n")
+		fmt.Fprintf(w,"\n")
 	}
+	w.Flush()
 }
 
 func LintFiles(files []string, errs chan os.Error) {
