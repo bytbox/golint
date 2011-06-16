@@ -1,2 +1,4 @@
-osopen		os		Open	.,.,.	incorrect os.Open API used	gofix:osopen
-httpfinalurl	http/client	Get	.,.,.	incorrect client.Get API used	gofix:httpfinalurl
+osopen		os		Open		.,.,.	incorrect os.Open API used		gofix:osopen
+httpfinalurl	http/client	Get		.,.,.	incorrect client.Get API used		gofix:httpfinalurl
+netdial		net		Dial		.,.,.	incorrect net.Dial API used		gofix:netdial
+netlookup	net		LookupHost	.,.,.	incorrect net.LookupHost API used	gofix:netlookup

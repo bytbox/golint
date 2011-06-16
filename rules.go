@@ -107,7 +107,7 @@ VariableDeprecationLinter{
 	DeprecationNotes{
 		"osopen"}},
 FunctionDeprecationLinter{
-	// osopen		os		Open	.,.,.	incorrect os.Open API used	gofix:osopen
+	// osopen		os		Open		.,.,.	incorrect os.Open API used		gofix:osopen
 	LinterDesc{
 		"deprecation",
 		"osopen",
@@ -122,7 +122,7 @@ FunctionDeprecationLinter{
 	DeprecationNotes{
 		"osopen"}},
 FunctionDeprecationLinter{
-	// httpfinalurl	http/client	Get	.,.,.	incorrect client.Get API used	gofix:httpfinalurl
+	// httpfinalurl	http/client	Get		.,.,.	incorrect client.Get API used		gofix:httpfinalurl
 	LinterDesc{
 		"deprecation",
 		"httpfinalurl",
@@ -136,4 +136,34 @@ FunctionDeprecationLinter{
 	},
 	DeprecationNotes{
 		"httpfinalurl"}},
+FunctionDeprecationLinter{
+	// netdial		net		Dial		.,.,.	incorrect net.Dial API used		gofix:netdial
+	LinterDesc{
+		"deprecation",
+		"netdial",
+		"incorrect net.Dial API used"},
+	"net",
+	"Dial",
+	[]string{
+		".",
+		".",
+		".",
+	},
+	DeprecationNotes{
+		"netdial"}},
+FunctionDeprecationLinter{
+	// netlookup	net		LookupHost	.,.,.	incorrect net.LookupHost API used	gofix:netlookup
+	LinterDesc{
+		"deprecation",
+		"netlookup",
+		"incorrect net.LookupHost API used"},
+	"net",
+	"LookupHost",
+	[]string{
+		".",
+		".",
+		".",
+	},
+	DeprecationNotes{
+		"netlookup"}},
 }
