@@ -79,7 +79,7 @@ func main() {
 func printLinterList() {
 	w := tabwriter.NewWriter(os.Stdout, 3, 8, 2, ' ', 0)
 	linters := make(map[string](map[string]string))
-	fmt.Fprintf(w,"%d total linters:\n",
+	fmt.Fprintf(w, "%d total linters:\n",
 		len(LineLinters) + len(ParsingLinters))
 	for _, linter := range LineLinters {
 		if _, ok := linters[linter.Desc().Category]; !ok {
@@ -98,11 +98,11 @@ func printLinterList() {
 			linter.Desc().Description
 	}
 	for category, ls := range linters {
-		fmt.Fprintf(w,"%s\t", category)
+		fmt.Fprintf(w, "%s\t", category)
 		for name, _ := range ls {
-			fmt.Fprintf(w,"%s ", name)
+			fmt.Fprintf(w, "%s ", name)
 		}
-		fmt.Fprintf(w,"\n")
+		fmt.Fprintf(w, "\n")
 	}
 	w.Flush()
 }
