@@ -21,6 +21,7 @@ import (
 // TODO order the lints appropriately
 // TODO separate out a go/lint package
 // TODO check package structure and goinstall compatibility
+// TODO allow linting from standard input
 
 var version = "0.2.0"
 
@@ -32,6 +33,12 @@ var (
 
 func main() {
 	errs := make(chan os.Error)
+	go func() {
+		// Complain about any errors
+		for err := range errs {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+		}
+	}()
 
 	flag.Parse()
 	args := flag.Args()
@@ -56,24 +63,21 @@ func main() {
 		files = make([]string, 1)
 		files[0] = "."
 	}
-	files = FilterSuffix(".go", ExpandFiles(files))
-	if *verbose {
-		for _, f := range files {
-			fmt.Printf("%s ", f)
+	if len(files) == 1 && files[0]=="-" {
+		fmt.Fprintf(os.Stderr, "Linting from standard input not supported\n")
+		os.Exit(1)
+		close(errs)
+	} else {
+		files = FilterSuffix(".go", ExpandFiles(files))
+		if *verbose {
+			for _, f := range files {
+				fmt.Printf("%s ", f)
+			}
+			fmt.Printf("\n")
 		}
-		fmt.Printf("\n")
+		LintFiles(files, errs)
+		close(errs)
 	}
-
-	go func() {
-		// Complain about any errors
-		for err := range errs {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
-		}
-	}()
-
-	LintFiles(files, errs)
-	close(errs)
-
 }
 
 func printLinterList() {
