@@ -20,6 +20,7 @@ import (
 // TODO don't print large numbers of repeated lints for a single file
 // TODO order the lints appropriately
 // TODO separate out a go/lint package
+// TODO check package structure and goinstall compatibility
 
 var version = "0.2.0"
 
