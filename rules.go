@@ -166,4 +166,20 @@ FunctionDeprecationLinter{
 	},
 	DeprecationNotes{
 		"netlookup"}},
+FunctionDeprecationLinter{
+	// tlsdial		crypto/tls	Dial		.,.,.,.	incorrect tls.Dial API used		gofix:tlsdial
+	LinterDesc{
+		"deprecation",
+		"tlsdial",
+		"incorrect tls.Dial API used"},
+	"crypto/tls",
+	"Dial",
+	[]string{
+		".",
+		".",
+		".",
+		".",
+	},
+	DeprecationNotes{
+		"tlsdial"}},
 }
