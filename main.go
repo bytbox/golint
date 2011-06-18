@@ -64,7 +64,7 @@ func main() {
 		files[0] = "."
 	}
 	if len(files) == 1 && files[0]=="-" {
-		fmt.Fprintf(os.Stderr, "Linting from standard input not supported\n")
+		fmt.Fprintf(os.Stderr, "Input from STDIN not supported\n")
 		os.Exit(1)
 		close(errs)
 	} else {
