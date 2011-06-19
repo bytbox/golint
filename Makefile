@@ -2,29 +2,14 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-.PHONY: all clean install
-
 include ${GOROOT}/src/Make.inc
 
-all: golint
+TARG = golint
+GOLINTFILES = line.go parsing.go deprecation.go rules.go
+GOFILES = main.go util.go $(addprefix go/lint/,${GOLINTFILES})
 
-golint: main.${O}
-	${LD} -o $@ main.${O}
-
-MAINFILES = main.go \
-            go/lint/line.go \
-            go/lint/parsing.go \
-            go/lint/deprecation.go \
-            go/lint/rules.go \
-            util.go
-            
-
-main.${O}: ${MAINFILES}
-	${GC} -o $@ ${MAINFILES}
+include $(GOROOT)/src/Make.cmd
 
 go/lint/rules.go: genrules.pl $(wildcard rules/*/* rules/*)
 	perl genrules.pl
-
-clean:
-	rm -f golint *.${O} rules.go
 
