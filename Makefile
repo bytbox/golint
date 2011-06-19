@@ -12,17 +12,17 @@ golint: main.${O}
 	${LD} -o $@ main.${O}
 
 MAINFILES = main.go \
-            line.go \
-            parsing.go \
-            deprecation.go \
-            rules.go \
+            go/lint/line.go \
+            go/lint/parsing.go \
+            go/lint/deprecation.go \
+            go/lint/rules.go \
             util.go
             
 
 main.${O}: ${MAINFILES}
 	${GC} -o $@ ${MAINFILES}
 
-rules.go: genrules.pl $(wildcard rules/*/* rules/*)
+go/lint/rules.go: genrules.pl $(wildcard rules/*/* rules/*)
 	perl genrules.pl
 
 clean:

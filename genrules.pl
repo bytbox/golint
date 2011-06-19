@@ -15,7 +15,7 @@ sub getNameparts {
 	return ($category, $name, $name2)
 }
 
-open RULES, ">rules.go";
+open RULES, ">go/lint/rules.go";
 
 open FIN, "rules/header.go";
 while ($line = <FIN>) {
