@@ -23,7 +23,7 @@ import (
 // TODO check package structure and goinstall compatibility
 // TODO allow linting from standard input
 
-var version = "0.2.0"
+var version = "0.2.1"
 
 var (
 	listLinters = flag.Bool("list", false, "list linters")
