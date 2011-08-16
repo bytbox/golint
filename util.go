@@ -17,7 +17,7 @@ import (
 // Read an array of lines from a file
 func ReadFileLines(filename string) ([]string, os.Error) {
 	contents, err := ioutil.ReadFile(filename)
-	lines := strings.Split(string(contents), "\n", -1)
+	lines := strings.Split(string(contents), "\n")
 	return lines, err
 }
 

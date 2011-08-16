@@ -131,7 +131,7 @@ func (oil OverlappingImportsLinter) RunLint(
 				imports[is.Path.Value] = is.Name.String()
 			} else {
 				path := strings.Trim(is.Path.Value, "\"")
-				parts := strings.Split(path, "/", -1)
+				parts := strings.Split(path, "/")
 				imports[is.Path.Value] = parts[len(parts)-1]
 			}
 		}

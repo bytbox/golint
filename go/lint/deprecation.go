@@ -74,7 +74,7 @@ func (fdl FunctionDeprecationLinter) RunLint(
 		lints chan Lint,
 		wg *sync.WaitGroup) {
 	wg.Add(1)
-	pkgNames := strings.Split(fdl.packageName, "/", 2)
+	pkgNames := strings.SplitN(fdl.packageName, "/", 2)
 	pkgName := pkgNames[len(pkgNames)-1]
 	getFuncCalls(ns, func(pkg *ast.Ident, f *ast.Ident, args []ast.Expr) {
 		// TODO actually look up the package

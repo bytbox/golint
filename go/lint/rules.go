@@ -182,4 +182,19 @@ FunctionDeprecationLinter{
 	},
 	DeprecationNotes{
 		"tlsdial"}},
+FunctionDeprecationLinter{
+	// stringssplit	strings		Split		.,.,.	old form of strings.Split used - use SplitN instead	gofix:stringssplit
+	LinterDesc{
+		"deprecation",
+		"stringssplit",
+		"old form of strings.Split used - use SplitN instead"},
+	"strings",
+	"Split",
+	[]string{
+		".",
+		".",
+		".",
+	},
+	DeprecationNotes{
+		"stringssplit"}},
 }
