@@ -10,7 +10,7 @@ import (
 	"os"
 	"regexp"
 	"sync"
-	"tabwriter"
+	"text/tabwriter"
 )
 
 // TODO linter to check for `gofix httpserver`
