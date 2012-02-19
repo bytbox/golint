@@ -1,6 +1,0 @@
-osopen		os		Open		.,.,.	incorrect os.Open API used		gofix:osopen
-httpfinalurl	http/client	Get		.,.,.	incorrect client.Get API used		gofix:httpfinalurl
-netdial		net		Dial		.,.,.	incorrect net.Dial API used		gofix:netdial
-netlookup	net		LookupHost	.,.,.	incorrect net.LookupHost API used	gofix:netlookup
-tlsdial		crypto/tls	Dial		.,.,.,.	incorrect tls.Dial API used		gofix:tlsdial
-stringssplit	strings		Split		.,.,.	old form of strings.Split used - use SplitN instead	gofix:stringssplit

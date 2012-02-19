@@ -1,2 +1,0 @@
-osocreate	os	O_CREAT		O_CREAT has been renamed to O_CREATE	gofix:osopen
-
