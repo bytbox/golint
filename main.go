@@ -6,6 +6,10 @@ import (
 	"os"
 	p "path/filepath"
 	"strings"
+
+	"go/parser"
+	"go/scanner"
+	"go/token"
 )
 
 var version = `0.3.0`
@@ -42,6 +46,27 @@ func main() {
 		srcs = append(srcs, listFiles(fname, ".go")...)
 	}
 	verb("\n")
+
+	errs := false
+	fset := token.NewFileSet()
+	for _, fname := range srcs {
+		_, err := parser.ParseFile(fset, fname, nil, parser.ParseComments)
+		if err != nil {
+			errs = true
+			switch e := err.(type) {
+			case scanner.ErrorList:
+				for _, ep := range e {
+					fmt.Fprintf(os.Stderr, "%s\n", ep.Error())
+				}
+			default:
+				fmt.Fprintf(os.Stderr, "%s\n", e.Error())
+			}
+		}
+	}
+	if errs {
+		fmt.Fprintln(os.Stderr, "Aborting with errors")
+		return
+	}
 }
 
 func listFiles(fname string, suf string) (fs []string) {
