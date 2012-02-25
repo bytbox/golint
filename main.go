@@ -6,11 +6,6 @@ import (
 	"os"
 	p "path/filepath"
 	"strings"
-
-	"go/ast"
-	"go/parser"
-	"go/scanner"
-	"go/token"
 )
 
 var version = `0.3.0`
@@ -48,58 +43,14 @@ func main() {
 	}
 	verb("\n")
 
-	// Parse all files and get ASTs
-	asts := map[string]*ast.File{}
-	errs := false
-	fset := token.NewFileSet()
-	for _, fname := range srcs {
-		fast, err := parser.ParseFile(fset, fname, nil, parser.ParseComments)
+	for _, sf := range srcs {
+		f, err := os.Open(sf)
 		if err != nil {
-			errs = true
-			handleParserError(err)
+			fmt.Fprintf(os.Stderr, "  ! %s\n", sf)
+			continue
 		}
-		asts[fname] = fast
-	}
-	if errs {
-		fmt.Fprintln(os.Stderr, "Aborting with errors")
-		return
-	}
-
-	// Create *ast.Package objects
-	pkglists := map[string]map[string]*ast.File{}
-	for fname, fast := range asts {
-		pname := fast.Name.Name
-		pl, ok := pkglists[pname]
-		if !ok {
-			pkglists[pname] = map[string]*ast.File{}
-			pl = pkglists[pname]
-		}
-		pl[fname] = fast
-	}
-	pkgs := map[string]*ast.Package{}
-	for pname, pkglist := range pkglists {
-		pkg, err := ast.NewPackage(fset, pkglist, importer, universe)
-		if err != nil {
-			handleParserError(err)
-			errs = true
-		} else {
-			pkgs[pname] = pkg
-		}
-	}
-	if errs {
-		fmt.Fprintln(os.Stderr, "Aborting with errors")
-		return
-	}
-}
-
-func handleParserError(err error) {
-	switch e := err.(type) {
-	case scanner.ErrorList:
-		for _, ep := range e {
-			fmt.Fprintf(os.Stderr, "%s\n", ep.Error())
-		}
-	default:
-		fmt.Fprintf(os.Stderr, "%s\n", e.Error())
+		PrintLex(f)
+		f.Close()
 	}
 }
 
