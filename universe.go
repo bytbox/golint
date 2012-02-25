@@ -1,13 +1,15 @@
 package main
 
 import (
-	"go/ast"
+	. "go/ast"
 )
 
 var (
-	universe *ast.Scope
+	universe = &Scope{
+		Outer:   nil,
+		Objects: map[string]*Object{
+			"string": NewObj(Typ, "string"),
+		},
+	}
 )
 
-func init() {
-
-}

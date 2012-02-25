@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -14,17 +13,19 @@ var importer = ast.Importer(find_import)
 
 // Implementing the ast.Importer signature
 func find_import(imports map[string]*ast.Object, pathstr string) (*ast.Object, error) {
+	pkgname := path.Base(pathstr)
+	rp, ok := imports[pkgname]
+	if ok { return rp, nil }
 	pr := filepath.Join(runtime.GOROOT(), "src", "pkg")
 	pp := filepath.Join(pr, pathstr)
+	pkg, err := ast.NewPackage(token.NewFileSet(), pkglist, importer, universe)
 	pkgs, err := parser.ParseDir(token.NewFileSet(), pp, isGoSource, 0)
 	if err != nil {
 		return nil, err
 	}
-	pkgname := path.Base(pathstr)
-	pkg, ok := pkgs[pkgname]
-	if !ok { return nil, errors.New("unknown") }
 	pkgObj := ast.NewObj(ast.Pkg, pkgname)
-	pkgObj.Data = pkg
+	pkgObj.Data = pkg.Scope
+	imports[pkgname] = pkgObj
 	return pkgObj, nil
 }
 
